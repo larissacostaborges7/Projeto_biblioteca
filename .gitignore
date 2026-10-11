@@ -1,0 +1,15 @@
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Dependências e arquivos temporários
+vendor/
+node_modules/
+*.log
+
+# Configurações locais e credenciais
+.env
+.env.*
+!.env.example
