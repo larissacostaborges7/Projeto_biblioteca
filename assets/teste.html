@@ -1,15 +1,2167 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biblioteca ETEC Arujá</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#244e5b">
+  <meta name="description" content="Descubra livros, participe de eventos e explore nossa biblioteca literária.">
+  <title>Entre Páginas | Biblioteca Literária</title>
+
+  <style>
+    /* ========================================
+       1. IDENTIDADE VISUAL E CONFIGURAÇÕES
+    ======================================== */
+    :root {
+      --azul-petroleo: #244e5b;
+      --azul-escuro: #183943;
+      --azul-medio: #688b98;
+      --azul-claro: #dce9ed;
+      --azul-gelo: #f1f6f7;
+      --branco: #ffffff;
+      --cinza: #66747a;
+      --cinza-claro: #e5eaec;
+      --texto: #293b41;
+      --verde: #377d63;
+      --dourado: #c49a58;
+      --sombra: 0 12px 35px rgba(31, 65, 76, 0.09);
+      --raio: 18px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 100px;
+    }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--azul-gelo);
+      color: var(--texto);
+      line-height: 1.6;
+    }
+
+    button, input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:focus-visible, input:focus-visible, a:focus-visible {
+      outline: 3px solid var(--dourado);
+      outline-offset: 3px;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .container {
+      width: min(1180px, 92%);
+      margin: 0 auto;
+    }
+
+    .botao {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 20px;
+      background: var(--azul-petroleo);
+      color: var(--branco);
+      font-weight: 600;
+      transition: background .25s, transform .25s;
+    }
+
+    .botao:hover {
+      background: var(--azul-escuro);
+      transform: translateY(-2px);
+    }
+
+    .botao-secundario {
+      background: var(--branco);
+      color: var(--azul-petroleo);
+      border: 1px solid var(--azul-claro);
+    }
+
+    .botao-secundario:hover {
+      background: var(--azul-claro);
+      color: var(--azul-escuro);
+    }
+
+    .secao {
+      padding: 65px 0;
+    }
+
+    .titulo-secao {
+      color: var(--azul-escuro);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      margin-bottom: 10px;
+      line-height: 1.2;
+    }
+
+    .subtitulo-secao {
+      color: var(--cinza);
+      margin-bottom: 30px;
+    }
+
+    .etiqueta {
+      display: inline-block;
+      color: var(--azul-petroleo);
+      background: var(--azul-claro);
+      padding: 5px 11px;
+      border-radius: 30px;
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      margin-bottom: 15px;
+    }
+
+    /* ========================================
+       2. CABEÇALHO E MENU SUPERIOR FIXO
+    ======================================== */
+    .navbar-superior {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, .96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--cinza-claro);
+    }
+
+    .navbar-interno {
+      min-height: 82px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      color: var(--azul-escuro);
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .logo-icone {
+      width: 45px;
+      height: 45px;
+      display: grid;
+      place-items: center;
+      background: var(--azul-petroleo);
+      color: white;
+      border-radius: 13px;
+      font-size: 1.45rem;
+    }
+
+    .logo-nome {
+      display: block;
+      font: 700 1.4rem Georgia, serif;
+      line-height: 1.2;
+    }
+
+    .logo-descricao {
+      display: block;
+      font-size: .68rem;
+      color: var(--cinza);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .navbar-abas {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .aba-botao {
+      border: none;
+      background: transparent;
+      color: var(--cinza);
+      padding: 11px 16px;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: all .25s;
+      white-space: nowrap;
+    }
+
+    .aba-botao:hover {
+      background: var(--azul-gelo);
+      color: var(--azul-petroleo);
+    }
+
+    .aba-botao.ativo {
+      background: var(--azul-petroleo);
+      color: white;
+    }
+
+    .menu-mobile {
+      display: none;
+      border: 1px solid var(--cinza-claro);
+      background: white;
+      color: var(--azul-petroleo);
+      border-radius: 9px;
+      padding: 8px 12px;
+      font-size: 1.3rem;
+    }
+
+    /* ========================================
+       3. SISTEMA DE PÁGINAS / SPA
+    ======================================== */
+    .pagina-conteudo {
+      display: none;
+      min-height: 70vh;
+      animation: entrada .4s ease both;
+    }
+
+    .pagina-conteudo.ativa {
+      display: block;
+    }
+
+    @keyframes entrada {
+      from {
+        opacity: 0;
+        transform: translateY(9px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ========================================
+       4. CARROSSEL DA TELA INICIAL
+    ======================================== */
+    .carrossel-container {
+      position: relative;
+      overflow: hidden;
+      min-height: 390px;
+      margin-top: 28px;
+      border-radius: 24px;
+      background: var(--azul-petroleo);
+      color: white;
+      box-shadow: var(--sombra);
+    }
+
+    .carrossel-slides {
+      position: relative;
+      min-height: 390px;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      align-items: center;
+      gap: 30px;
+      padding: 45px 70px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(18px);
+      transition: opacity .55s ease, transform .55s ease, visibility .55s;
+      background: linear-gradient(120deg, #244e5b, #527b87);
+    }
+
+    .slide:nth-child(2) {
+      background: linear-gradient(120deg, #374e59, #829da5);
+    }
+
+    .slide:nth-child(3) {
+      background: linear-gradient(120deg, #244e5b, #777b79);
+    }
+
+    .slide.ativo {
+      position: relative;
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+    }
+
+    .slide-texto {
+      max-width: 560px;
+    }
+
+    .slide .etiqueta {
+      background: rgba(255,255,255,.15);
+      color: white;
+    }
+
+    .slide h2 {
+      font: 700 clamp(2rem, 4vw, 3.3rem)/1.15 Georgia, serif;
+      margin-bottom: 17px;
+    }
+
+    .slide p {
+      color: #edf4f5;
+      margin-bottom: 25px;
+      max-width: 510px;
+    }
+
+    .slide .botao {
+      background: white;
+      color: var(--azul-escuro);
+    }
+
+    .slide-ilustracao {
+      display: grid;
+      place-items: center;
+      min-height: 240px;
+      font-size: clamp(7rem, 16vw, 12rem);
+      filter: drop-shadow(0 16px 18px rgba(0,0,0,.2));
+    }
+
+    .carrossel-seta {
+      position: absolute;
+      z-index: 3;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 43px;
+      height: 43px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.35);
+      background: rgba(255,255,255,.15);
+      color: white;
+      font-size: 1.5rem;
+      display: grid;
+      place-items: center;
+      transition: background .2s;
+    }
+
+    .carrossel-seta:hover {
+      background: rgba(255,255,255,.3);
+    }
+
+    .carrossel-anterior { left: 15px; }
+    .carrossel-proximo { right: 15px; }
+
+    .carrossel-indicadores {
+      position: absolute;
+      bottom: 18px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 9px;
+      z-index: 5;
+    }
+
+    .indicador {
+      border: none;
+      width: 9px;
+      height: 9px;
+      border-radius: 50px;
+      background: rgba(255,255,255,.5);
+      transition: width .25s, background .25s;
+    }
+
+    .indicador.ativo {
+      width: 27px;
+      background: white;
+    }
+
+    /* ========================================
+       5. BOAS-VINDAS E RECOMENDAÇÕES
+    ======================================== */
+    .boas-vindas {
+      padding-top: 55px;
+    }
+
+    .boas-vindas-topo {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .boas-vindas-topo p {
+      max-width: 640px;
+      color: var(--cinza);
+    }
+
+    .grade-livros {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .card-livro {
+      min-width: 0;
+      background: white;
+      border: 1px solid var(--cinza-claro);
+      border-radius: var(--raio);
+      overflow: hidden;
+      transition: transform .25s, box-shadow .25s;
+    }
+
+    .card-livro:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--sombra);
+    }
+
+    .livro-capa {
+      height: 220px;
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: #dce9ed;
+    }
+
+    .livro-capa img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: transform .3s;
+    }
+
+    .card-livro:hover .livro-capa img {
+      transform: scale(1.04);
+    }
+
+    .livro-fallback {
+      width: 125px;
+      height: 175px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 13px;
+      padding: 15px;
+      color: white;
+      text-align: center;
+      font: 700 1.05rem Georgia, serif;
+      box-shadow: 5px 7px 10px #0002;
+      background: linear-gradient(145deg, #527b87, #244e5b);
+    }
+
+    .livro-fallback span {
+      font-size: 2rem;
+    }
+
+    .livro-info {
+      padding: 18px;
+    }
+
+    .livro-info h3 {
+      font: 700 1.08rem Georgia, serif;
+      color: var(--azul-escuro);
+      margin-bottom: 5px;
+    }
+
+    .livro-autor {
+      font-size: .9rem;
+      color: var(--cinza);
+      margin-bottom: 14px;
+    }
+
+    .status-livro {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .77rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .status-livro::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .disponivel { color: var(--verde); }
+    .emprestado { color: #a16c28; }
+
+    .livro-acoes {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .livro-acoes .botao {
+      padding: 9px 12px;
+      font-size: .83rem;
+      flex: 1;
+    }
+
+    .favorito-botao {
+      background: white;
+      color: var(--cinza);
+      border: 1px solid var(--cinza-claro);
+      border-radius: 9px;
+      width: 40px;
+      height: 40px;
+      flex-shrink: 0;
+      font-size: 1.2rem;
+    }
+
+    .favorito-botao.marcado {
+      color: #c34d65;
+      background: #fff0f3;
+      border-color: #f3c5ce;
+    }
+
+    /* ========================================
+       6. BARRA DE BUSCA E FILTROS
+    ======================================== */
+    .acervo-cabecalho {
+      padding: 48px 0 30px;
+      background: linear-gradient(120deg, #dce9ed, #f1f6f7);
+    }
+
+    .acervo-cabecalho p {
+      color: var(--cinza);
+      margin-top: 10px;
+    }
+
+    .busca-container {
+      margin-top: 25px;
+      display: flex;
+      gap: 12px;
+      max-width: 700px;
+    }
+
+    .busca-input {
+      min-width: 0;
+      flex: 1;
+      padding: 14px 17px;
+      border: 1px solid #d1dfe3;
+      background: white;
+      color: var(--texto);
+      border-radius: 11px;
+    }
+
+    .filtros-acervo {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+    }
+
+    .filtro-botao {
+      background: white;
+      border: 1px solid var(--cinza-claro);
+      color: var(--cinza);
+      border-radius: 25px;
+      padding: 8px 16px;
+      font-size: .9rem;
+    }
+
+    .filtro-botao.ativo {
+      background: var(--azul-petroleo);
+      color: white;
+      border-color: var(--azul-petroleo);
+    }
+
+    .resultado-contagem {
+      color: var(--cinza);
+      font-size: .9rem;
+      margin-bottom: 20px;
+    }
+
+    .mensagem-vazia {
+      padding: 40px 20px;
+      background: white;
+      border-radius: var(--raio);
+      text-align: center;
+      color: var(--cinza);
+    }
+
+    /* ========================================
+       7. SOBRE NÓS
+    ======================================== */
+    .sobre-intro {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 45px;
+      align-items: center;
+    }
+
+    .sobre-ilustracao {
+      min-height: 340px;
+      display: grid;
+      place-items: center;
+      border-radius: 24px;
+      background: linear-gradient(140deg, #dce9ed, #b7cdd3);
+      font-size: 10rem;
+    }
+
+    .sobre-texto p {
+      color: var(--cinza);
+      margin: 16px 0;
+    }
+
+    .valores-grade {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 45px;
+    }
+
+    .valor-card {
+      background: white;
+      border: 1px solid var(--cinza-claro);
+      padding: 27px;
+      border-radius: var(--raio);
+    }
+
+    .valor-icone {
+      width: 50px;
+      height: 50px;
+      border-radius: 14px;
+      background: var(--azul-claro);
+      display: grid;
+      place-items: center;
+      font-size: 1.5rem;
+      margin-bottom: 17px;
+    }
+
+    .valor-card h3 {
+      font: 700 1.2rem Georgia, serif;
+      margin-bottom: 10px;
+      color: var(--azul-escuro);
+    }
+
+    .valor-card p {
+      font-size: .92rem;
+      color: var(--cinza);
+    }
+
+    .contato-grade {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      margin-top: 35px;
+    }
+
+    .contato-card {
+      background: white;
+      padding: 28px;
+      border-radius: var(--raio);
+      border: 1px solid var(--cinza-claro);
+    }
+
+    .contato-card p {
+      color: var(--cinza);
+      margin-top: 10px;
+    }
+
+    /* ========================================
+       8. PERFIL DO LEITOR
+    ======================================== */
+    .perfil-cabecalho {
+      padding: 48px 0;
+      background: linear-gradient(120deg, #dce9ed, #f1f6f7);
+    }
+
+    .perfil-identidade {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .avatar {
+      width: 90px;
+      height: 90px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--azul-petroleo);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 2rem;
+      border: 5px solid white;
+      box-shadow: var(--sombra);
+    }
+
+    .perfil-identidade h1 {
+      font: 700 2rem Georgia, serif;
+      color: var(--azul-escuro);
+    }
+
+    .perfil-identidade p {
+      color: var(--cinza);
+    }
+
+    .perfil-resumo {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 30px;
+    }
+
+    .estatistica-card {
+      padding: 22px;
+      background: white;
+      border: 1px solid var(--cinza-claro);
+      border-radius: var(--raio);
+    }
+
+    .estatistica-card span {
+      color: var(--cinza);
+      font-size: .9rem;
+    }
+
+    .estatistica-card strong {
+      display: block;
+      color: var(--azul-petroleo);
+      font-size: 2rem;
+      margin-top: 6px;
+    }
+
+    .perfil-bloco {
+      margin-top: 38px;
+    }
+
+    .perfil-bloco h2 {
+      font: 700 1.6rem Georgia, serif;
+      margin-bottom: 20px;
+      color: var(--azul-escuro);
+    }
+
+    .emprestimo-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      background: white;
+      padding: 20px;
+      border-radius: 14px;
+      border: 1px solid var(--cinza-claro);
+      margin-bottom: 12px;
+    }
+
+    .emprestimo-item p {
+      color: var(--cinza);
+      font-size: .9rem;
+    }
+
+    .perfil-vazio {
+      padding: 25px;
+      background: white;
+      border-radius: 14px;
+      color: var(--cinza);
+      border: 1px solid var(--cinza-claro);
+    }
+
+    /* ========================================
+       9. RODAPÉ
+    ======================================== */
+    .rodape {
+      background: var(--azul-escuro);
+      color: white;
+      margin-top: 30px;
+      padding: 40px 0 20px;
+    }
+
+    .rodape-superior {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 25px;
+      padding-bottom: 28px;
+    }
+
+    .rodape .logo {
+      color: white;
+    }
+
+    .rodape .logo-icone {
+      background: rgba(255,255,255,.13);
+    }
+
+    .rodape p {
+      color: #c3d1d5;
+      font-size: .9rem;
+      max-width: 390px;
+      margin-top: 12px;
+    }
+
+    .rodape-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .rodape-links button {
+      border: none;
+      background: transparent;
+      color: #e2ebee;
+      padding: 8px;
+    }
+
+    .rodape-links button:hover {
+      text-decoration: underline;
+    }
+
+    .rodape-final {
+      border-top: 1px solid #ffffff24;
+      padding-top: 18px;
+      text-align: center;
+      color: #c3d1d5;
+      font-size: .8rem;
+    }
+
+    /* ========================================
+       10. NOTIFICAÇÕES E MODAL
+    ======================================== */
+    .notificacao {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      z-index: 2000;
+      width: min(370px, calc(100% - 44px));
+      padding: 16px 20px;
+      background: var(--azul-escuro);
+      color: white;
+      border-radius: 12px;
+      box-shadow: var(--sombra);
+      opacity: 0;
+      transform: translateY(15px);
+      pointer-events: none;
+      transition: opacity .25s, transform .25s;
+    }
+
+    .notificacao.visivel {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .modal-fundo {
+      position: fixed;
+      inset: 0;
+      z-index: 3000;
+      padding: 20px;
+      background: rgba(16, 36, 42, .65);
+      display: none;
+      place-items: center;
+    }
+
+    .modal-fundo.aberto {
+      display: grid;
+    }
+
+    .modal-conteudo {
+      width: min(480px, 100%);
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: var(--sombra);
+      animation: entrada .25s ease;
+    }
+
+    .modal-topo {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      align-items: start;
+      margin-bottom: 15px;
+    }
+
+    .modal-topo h2 {
+      font: 700 1.6rem Georgia, serif;
+      color: var(--azul-escuro);
+    }
+
+    .modal-fechar {
+      border: none;
+      background: var(--azul-gelo);
+      color: var(--azul-petroleo);
+      border-radius: 8px;
+      padding: 5px 11px;
+      font-size: 1.3rem;
+    }
+
+    .modal-conteudo p {
+      color: var(--cinza);
+      margin-bottom: 15px;
+    }
+
+    .modal-acoes {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    /* ========================================
+       11. RESPONSIVIDADE
+    ======================================== */
+    @media (max-width: 950px) {
+      .navbar-interno {
+        flex-wrap: wrap;
+        padding: 14px 0;
+      }
+
+      .grade-livros {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .slide {
+        padding: 40px 55px;
+      }
+
+      .slide-ilustracao {
+        font-size: 8rem;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .navbar-interno {
+        min-height: 72px;
+      }
+
+      .menu-mobile {
+        display: block;
+      }
+
+      .navbar-abas {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        padding-bottom: 5px;
+      }
+
+      .navbar-abas.aberto {
+        display: flex;
+      }
+
+      .aba-botao {
+        text-align: left;
+        padding: 12px 15px;
+      }
+
+      .carrossel-container {
+        margin-top: 18px;
+        border-radius: 18px;
+      }
+
+      .carrossel-slides {
+        min-height: 510px;
+      }
+
+      .slide {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr auto;
+        gap: 5px;
+        padding: 35px 38px 55px;
+        text-align: center;
+      }
+
+      .slide-texto {
+        margin: auto;
+      }
+
+      .slide-ilustracao {
+        min-height: 115px;
+        font-size: 5rem;
+      }
+
+      .carrossel-anterior { left: 7px; }
+      .carrossel-proximo { right: 7px; }
+
+      .boas-vindas-topo {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .grade-livros {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .livro-capa {
+        height: 175px;
+        padding: 12px;
+      }
+
+      .livro-fallback {
+        width: 100px;
+        height: 140px;
+        font-size: .9rem;
+      }
+
+      .livro-info {
+        padding: 13px;
+      }
+
+      .livro-info h3 {
+        font-size: .98rem;
+      }
+
+      .livro-acoes {
+        flex-wrap: wrap;
+      }
+
+      .livro-acoes .botao {
+        padding: 8px;
+      }
+
+      .sobre-intro {
+        grid-template-columns: 1fr;
+        gap: 25px;
+      }
+
+      .sobre-ilustracao {
+        min-height: 230px;
+        font-size: 7rem;
+      }
+
+      .valores-grade {
+        grid-template-columns: 1fr;
+      }
+
+      .contato-grade {
+        grid-template-columns: 1fr;
+      }
+
+      .perfil-resumo {
+        grid-template-columns: 1fr;
+      }
+
+      .perfil-identidade h1 {
+        font-size: 1.5rem;
+      }
+
+      .avatar {
+        width: 70px;
+        height: 70px;
+      }
+
+      .emprestimo-item {
+        align-items: start;
+        flex-direction: column;
+      }
+
+      .rodape-superior {
+        flex-direction: column;
+      }
+
+      .busca-container {
+        flex-direction: column;
+      }
+
+      .secao {
+        padding: 45px 0;
+      }
+    }
+
+    @media (max-width: 370px) {
+      .grade-livros {
+        grid-template-columns: 1fr;
+      }
+
+      .livro-capa {
+        height: 220px;
+      }
+
+      .livro-fallback {
+        width: 125px;
+        height: 175px;
+      }
+
+      .logo-nome {
+        font-size: 1.2rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-    <h1>Biblioteca ETEC Arujá</h1>
-    <p>Bem-vindo ao sistema da biblioteca!</p>
+  <!-- ======================================
+       CABEÇALHO E NAVEGAÇÃO
+  ======================================= -->
+  <header class="navbar-superior">
+    <div class="container navbar-interno">
+
+      <a href="#inicio" class="logo" aria-label="Entre Páginas - Tela Inicial">
+        <span class="logo-icone" aria-hidden="true">📚</span>
+        <span>
+          <span class="logo-nome">Entre Páginas</span>
+          <span class="logo-descricao">Biblioteca & Cultura</span>
+        </span>
+      </a>
+
+      <button class="menu-mobile" id="menuMobile"
+        aria-label="Abrir menu" aria-expanded="false"
+        aria-controls="navbarAbas">☰</button>
+
+      <nav class="navbar-abas" id="navbarAbas" aria-label="Navegação principal">
+        <button class="aba-botao ativo" data-pagina="inicio">⌂ Tela Inicial</button>
+        <button class="aba-botao" data-pagina="acervo">▤ Acervo</button>
+        <button class="aba-botao" data-pagina="sobre">♡ Sobre Nós</button>
+        <button class="aba-botao" data-pagina="perfil">♙ Perfil</button>
+      </nav>
+
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ====================================
+         PÁGINA 1: TELA INICIAL
+    ===================================== -->
+    <section class="pagina-conteudo ativa" id="pagina-inicio"
+      aria-label="Tela Inicial">
+
+      <div class="container">
+        <div class="carrossel-container" aria-roledescription="carrossel"
+          aria-label="Destaques da biblioteca">
+
+          <div class="carrossel-slides" id="carrosselSlides">
+
+            <article class="slide ativo" aria-label="Slide 1 de 3">
+              <div class="slide-texto">
+                <span class="etiqueta">UM UNIVERSO DE POSSIBILIDADES</span>
+                <h2>Todo livro abre uma nova janela.</h2>
+                <p>
+                  Encontre histórias que inspiram, ideias que transformam
+                  e páginas que fazem você viajar sem sair do lugar.
+                </p>
+                <button class="botao" data-ir="acervo">Explorar o acervo →</button>
+              </div>
+              <div class="slide-ilustracao" aria-hidden="true">📖</div>
+            </article>
+
+            <article class="slide" aria-label="Slide 2 de 3">
+              <div class="slide-texto">
+                <span class="etiqueta">AGENDA CULTURAL</span>
+                <h2>Encontros que nascem da leitura.</h2>
+                <p>
+                  Descubra rodas de leitura, conversas literárias e
+                  atividades para compartilhar o prazer de ler.
+                </p>
+                <button class="botao" data-ir="sobre">Conheça a biblioteca →</button>
+              </div>
+              <div class="slide-ilustracao" aria-hidden="true">☕</div>
+            </article>
+
+            <article class="slide" aria-label="Slide 3 de 3">
+              <div class="slide-texto">
+                <span class="etiqueta">NOVIDADES DO ACERVO</span>
+                <h2>Sua próxima história favorita espera por você.</h2>
+                <p>
+                  Explore clássicos, romances, fantasia e descobertas
+                  literárias para todos os momentos.
+                </p>
+                <button class="botao" data-ir="acervo">Descobrir livros →</button>
+              </div>
+              <div class="slide-ilustracao" aria-hidden="true">✨</div>
+            </article>
+
+          </div>
+
+          <button class="carrossel-seta carrossel-anterior"
+            id="slideAnterior" aria-label="Slide anterior">‹</button>
+          <button class="carrossel-seta carrossel-proximo"
+            id="slideProximo" aria-label="Próximo slide">›</button>
+
+          <div class="carrossel-indicadores" id="indicadores"
+            aria-label="Selecionar slide">
+            <button class="indicador ativo" aria-label="Ir para slide 1"
+              aria-pressed="true"></button>
+            <button class="indicador" aria-label="Ir para slide 2"
+              aria-pressed="false"></button>
+            <button class="indicador" aria-label="Ir para slide 3"
+              aria-pressed="false"></button>
+          </div>
+        </div>
+      </div>
+
+      <section class="secao boas-vindas">
+        <div class="container">
+
+          <div class="boas-vindas-topo">
+            <div>
+              <span class="etiqueta">SEJA BEM-VINDO</span>
+              <h1 class="titulo-secao">Seu próximo capítulo começa aqui.</h1>
+              <p>
+                Mais do que uma biblioteca, somos um espaço de acolhimento,
+                imaginação e conhecimento. Sinta-se em casa entre nossas páginas.
+              </p>
+            </div>
+            <button class="botao" data-ir="acervo">Ver todo o acervo →</button>
+          </div>
+
+          <h2 class="titulo-secao" style="font-size:1.65rem;margin-bottom:25px">
+            ✦ Recomendações da semana
+          </h2>
+
+          <div class="grade-livros" id="livrosRecomendados"></div>
+
+        </div>
+      </section>
+    </section>
+
+    <!-- ====================================
+         PÁGINA 2: ACERVO
+    ===================================== -->
+    <section class="pagina-conteudo" id="pagina-acervo" aria-label="Acervo">
+
+      <div class="acervo-cabecalho">
+        <div class="container">
+          <span class="etiqueta">ENCONTRE SUA PRÓXIMA LEITURA</span>
+          <h1 class="titulo-secao">Nosso Acervo</h1>
+          <p>Histórias, conhecimentos e universos inteiros esperando por você.</p>
+
+          <form class="busca-container" id="formBusca" role="search">
+            <input class="busca-input" id="campoBusca" type="search"
+              placeholder="Buscar por título ou autor..."
+              aria-label="Buscar livros por título ou autor">
+            <button class="botao" type="submit">⌕ Buscar</button>
+          </form>
+        </div>
+      </div>
+
+      <section class="secao">
+        <div class="container">
+
+          <div class="filtros-acervo" aria-label="Filtrar livros">
+            <button class="filtro-botao ativo" data-filtro="todos">Todos os livros</button>
+            <button class="filtro-botao" data-filtro="disponivel">Disponíveis</button>
+            <button class="filtro-botao" data-filtro="emprestado">Emprestados</button>
+            <button class="filtro-botao" data-filtro="favoritos">♥ Favoritos</button>
+          </div>
+
+          <p class="resultado-contagem" id="resultadoContagem"
+            aria-live="polite"></p>
+
+          <div class="grade-livros" id="gradeAcervo"></div>
+
+          <div class="mensagem-vazia" id="mensagemVazia" hidden>
+            <p style="font-size:2rem">🔎</p>
+            <h2>Nenhum livro encontrado</h2>
+            <p>Tente pesquisar outro título ou autor.</p>
+          </div>
+
+        </div>
+      </section>
+    </section>
+
+    <!-- ====================================
+         PÁGINA 3: SOBRE NÓS
+    ===================================== -->
+    <section class="pagina-conteudo" id="pagina-sobre" aria-label="Sobre Nós">
+
+      <section class="secao">
+        <div class="container">
+
+          <div class="sobre-intro">
+            <div class="sobre-texto">
+              <span class="etiqueta">NOSSA ESSÊNCIA</span>
+              <h1 class="titulo-secao">Um lugar onde as histórias encontram pessoas.</h1>
+
+              <p>
+                📚 Muito mais que livros: um mundo de histórias!
+              </p>
+
+              <p>
+                Desde 1960, a Biblioteca Municipal Professora Alda Martins Soncini faz parte da história de Arujá. Entre páginas, sonhos e descobertas, ela se tornou um espaço onde o conhecimento atravessa gerações e a imaginação não conhece limites.
+              </p>
+
+              <p>
+               Imagine quantas histórias já passaram por suas estantes e quantos sonhos começaram com um simples livro. Mais do que um lugar de leitura, a biblioteca é um convite para viajar sem sair do lugar, descobrir novos mundos e escrever os próximos capítulos da sua própria história.
+              </p>
+
+              <p>
+Entre, explore e descubra: sua próxima grande aventura pode estar esperando por você em uma página.✨
+              </p>
+
+              <p>
+📍 Onde nos encontrar? 
+Rua São Paulo, nº 110 — Jardim Planalto, Arujá – SP.
+
+🕒 Horário de funcionamento
+De segunda a sexta-feira, das 8h às 17h.
+
+📞 Informações: (11) 4653-4042
+              </p>
+
+              <p>
+                💌 Venha descobrir quantas histórias cabem em um só lugar. A próxima pode ser a sua!
+              </p>
+
+              <button class="botao" data-ir="acervo">Conheça nosso acervo</button>
+            </div>
+
+            <div class="sobre-ilustracao" role="img"
+              aria-label="Ilustração de livros e café">📚☕</div>
+          </div>
+
+          <div class="valores-grade">
+
+            <article class="valor-card">
+              <div class="valor-icone" aria-hidden="true">🎯</div>
+              <h3>Nossa missão</h3>
+              <p>
+                Democratizar o acesso à leitura, estimular o pensamento
+                crítico e tornar o conhecimento acessível a todos.
+              </p>
+            </article>
+
+            <article class="valor-card">
+              <div class="valor-icone" aria-hidden="true">🌿</div>
+              <h3>Nossa visão</h3>
+              <p>
+                Ser um espaço de referência em acolhimento, cultura e
+                incentivo à formação de novos leitores.
+              </p>
+            </article>
+
+            <article class="valor-card">
+              <div class="valor-icone" aria-hidden="true">🤍</div>
+              <h3>Nossos valores</h3>
+              <p>
+                Respeito, inclusão, curiosidade, criatividade, diversidade
+                cultural e amor pelo conhecimento.
+              </p>
+            </article>
+
+          </div>
+
+          <div class="contato-grade">
+
+            <article class="contato-card">
+              <span class="etiqueta">VISITE-NOS</span>
+              <h2 class="titulo-secao" style="font-size:1.5rem">Horário de funcionamento</h2>
+              <p>Segunda a sexta: 9h às 19h</p>
+              <p>Sábados: 9h às 14h</p>
+              <p>Domingos e feriados: fechado</p>
+              <p style="font-size:.8rem">
+                Horários ilustrativos para o projeto demonstrativo.
+              </p>
+            </article>
+
+            <article class="contato-card">
+              <span class="etiqueta">FALE CONOSCO</span>
+              <h2 class="titulo-secao" style="font-size:1.5rem">Vamos conversar?</h2>
+              <p>✉ contato@entrepaginas.example</p>
+              <p>☎ (11) 0000-0000</p>
+              <p>📍 Endereço a definir</p>
+              <p style="font-size:.8rem">
+                Informações fictícias para demonstração. Substitua-as
+                pelos dados reais da biblioteca.
+              </p>
+            </article>
+
+          </div>
+
+        </div>
+      </section>
+    </section>
+
+    <!-- ====================================
+         PÁGINA 4: PERFIL DO LEITOR
+    ===================================== -->
+    <section class="pagina-conteudo" id="pagina-perfil" aria-label="Perfil">
+
+      <div class="perfil-cabecalho">
+        <div class="container">
+
+          <div class="perfil-identidade">
+            <div class="avatar" aria-hidden="true">L</div>
+            <div>
+              <span class="etiqueta">ESPAÇO DO LEITOR</span>
+              <h1>Olá, Leitor(a)! ✨</h1>
+              <p>Seu cantinho literário pessoal.</p>
+            </div>
+          </div>
+
+          <div class="perfil-resumo">
+            <div class="estatistica-card">
+              <span>Empréstimos ativos</span>
+              <strong id="totalEmprestimos">0</strong>
+            </div>
+            <div class="estatistica-card">
+              <span>Livros favoritos</span>
+              <strong id="totalFavoritos">0</strong>
+            </div>
+            <div class="estatistica-card">
+              <span>Leituras concluídas</span>
+              <strong id="totalLeituras">3</strong>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <section class="secao">
+        <div class="container">
+
+          <div class="perfil-bloco">
+            <h2>📖 Meus empréstimos</h2>
+            <div id="listaEmprestimos"></div>
+          </div>
+
+          <div class="perfil-bloco">
+            <h2>♥ Minha lista de favoritos</h2>
+            <p class="subtitulo-secao">
+              Livros que você guardou para ler depois.
+            </p>
+            <div class="grade-livros" id="gradeFavoritos"></div>
+            <div class="perfil-vazio" id="favoritosVazios" hidden>
+              Você ainda não adicionou livros aos favoritos.
+              Explore o acervo e clique no coração para salvar suas escolhas.
+            </div>
+          </div>
+
+          <div class="perfil-bloco">
+            <h2>ℹ Sobre esta conta</h2>
+            <div class="perfil-vazio">
+              Esta é uma área de leitor demonstrativa. As reservas e os
+              favoritos são guardados neste navegador, mas não existe
+              autenticação nem cadastro real de usuário.
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </section>
+
+  </main>
+
+  <!-- ======================================
+       RODAPÉ
+  ======================================= -->
+  <footer class="rodape">
+    <div class="container">
+
+      <div class="rodape-superior">
+        <div>
+          <a href="#inicio" class="logo" data-ir="inicio">
+            <span class="logo-icone" aria-hidden="true">📚</span>
+            <span>
+              <span class="logo-nome">Entre Páginas</span>
+              <span class="logo-descricao">Biblioteca & Cultura</span>
+            </span>
+          </a>
+          <p>
+            Um convite para desacelerar, descobrir novas ideias e
+            encontrar um pouco de você em cada história.
+          </p>
+        </div>
+
+        <nav class="rodape-links" aria-label="Links do rodapé">
+          <button data-ir="inicio">Início</button>
+          <button data-ir="acervo">Acervo</button>
+          <button data-ir="sobre">Sobre Nós</button>
+          <button data-ir="perfil">Perfil</button>
+        </nav>
+      </div>
+
+      <div class="rodape-final">
+        © <span id="anoAtual"></span> Entre Páginas — Projeto demonstrativo.
+        Feito com carinho por quem ama livros. ♡
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Notificações acessíveis -->
+  <div class="notificacao" id="notificacao" role="status"
+    aria-live="polite"></div>
+
+  <!-- Janela de detalhes e reservas -->
+  <div class="modal-fundo" id="modalFundo"
+    role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+    <div class="modal-conteudo">
+      <div class="modal-topo">
+        <h2 id="modalTitulo">Detalhes do livro</h2>
+        <button class="modal-fechar" id="fecharModal"
+          aria-label="Fechar janela">×</button>
+      </div>
+      <div id="modalCorpo"></div>
+      <div class="modal-acoes" id="modalAcoes"></div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================
+       1. DADOS DEMONSTRATIVOS DO ACERVO
+       Capas obtidas do serviço Open Library.
+       Os livros, estados e reservas são exemplos.
+    ========================================== */
+
+    const livros = [
+      {
+        id: 1,
+        titulo: "Dom Casmurro",
+        autor: "Machado de Assis",
+        categoria: "Clássico brasileiro",
+        disponivel: true,
+        capa: "https://covers.openlibrary.org/b/isbn/9788594318241-M.jpg",
+        descricao: "Um dos grandes clássicos da literatura brasileira. Bentinho revisita sua história de amor com Capitu, entre memórias, dúvidas e ciúmes."
+      },
+      {
+        id: 2,
+        titulo: "O Pequeno Príncipe",
+        autor: "Antoine de Saint-Exupéry",
+        categoria: "Fábula",
+        disponivel: true,
+        capa: "https://covers.openlibrary.org/b/isbn/9780156012195-M.jpg",
+        descricao: "Uma narrativa poética sobre amizade, afeto e o modo como enxergamos o mundo."
+      },
+      {
+        id: 3,
+        titulo: "Orgulho e Preconceito",
+        autor: "Jane Austen",
+        categoria: "Romance",
+        disponivel: false,
+        capa: "https://covers.openlibrary.org/b/isbn/9780141439518-M.jpg",
+        descricao: "Uma história de relações, primeiras impressões e convenções sociais na Inglaterra do século XIX."
+      },
+      {
+        id: 4,
+        titulo: "A Biblioteca da Meia-Noite",
+        autor: "Matt Haig",
+        categoria: "Ficção",
+        disponivel: true,
+        capa: "https://covers.openlibrary.org/b/isbn/9780525559474-M.jpg",
+        descricao: "Entre possibilidades de vidas diferentes, Nora explora escolhas, arrependimentos e novos caminhos."
+      },
+      {
+        id: 5,
+        titulo: "Harry Potter e a Pedra Filosofal",
+        autor: "J. K. Rowling",
+        categoria: "Fantasia",
+        disponivel: true,
+        capa: "https://covers.openlibrary.org/b/isbn/9780590353427-M.jpg",
+        descricao: "O início da jornada de um jovem que descobre um mundo de magia, amizade e mistérios."
+      },
+      {
+        id: 6,
+        titulo: "A Hora da Estrela",
+        autor: "Clarice Lispector",
+        categoria: "Literatura brasileira",
+        disponivel: false,
+        capa: "https://covers.openlibrary.org/b/isbn/9788520925687-M.jpg",
+        descricao: "A trajetória de Macabéa é narrada em uma obra que provoca reflexões sobre existência e desigualdade."
+      },
+      {
+        id: 7,
+        titulo: "O Hobbit",
+        autor: "J. R. R. Tolkien",
+        categoria: "Fantasia",
+        disponivel: true,
+        capa: "https://covers.openlibrary.org/b/isbn/9780547928227-M.jpg",
+        descricao: "Bilbo Bolseiro deixa sua vida tranquila para participar de uma aventura repleta de perigos e descobertas."
+      },
+      {
+        id: 8,
+        titulo: "1984",
+        autor: "George Orwell",
+        categoria: "Ficção distópica",
+        disponivel: true,
+        capa: "https://covers.openlibrary.org/b/isbn/9780451524935-M.jpg",
+        descricao: "Uma distopia sobre vigilância, manipulação da informação e liberdade individual."
+      },
+      {
+        id: 9,
+        titulo: "Capitães da Areia",
+        autor: "Jorge Amado",
+        categoria: "Literatura brasileira",
+        disponivel: true,
+        capa: "https://covers.openlibrary.org/b/isbn/9788535911695-M.jpg",
+        descricao: "A vida de meninos em situação de abandono nas ruas de Salvador, marcada por amizade e desigualdade."
+      },
+      {
+        id: 10,
+        titulo: "A Revolução dos Bichos",
+        autor: "George Orwell",
+        categoria: "Sátira",
+        disponivel: false,
+        capa: "https://covers.openlibrary.org/b/isbn/9780451526342-M.jpg",
+        descricao: "Uma fábula política sobre poder, manipulação e os rumos de uma revolução."
+      },
+      {
+        id: 11,
+        titulo: "Mulherzinhas",
+        autor: "Louisa May Alcott",
+        categoria: "Romance",
+        disponivel: true,
+        capa: "https://covers.openlibrary.org/b/isbn/9780147514011-M.jpg",
+        descricao: "Acompanhe as irmãs March enquanto amadurecem, enfrentam desafios e descobrem seus próprios sonhos."
+      },
+      {
+        id: 12,
+        titulo: "Coraline",
+        autor: "Neil Gaiman",
+        categoria: "Fantasia",
+        disponivel: true,
+        capa: "https://covers.openlibrary.org/b/isbn/9780380807345-M.jpg",
+        descricao: "Uma garota descobre uma versão inquietante de sua casa e precisa reunir coragem para enfrentar seus segredos."
+      }
+    ];
+
+    /* ==========================================
+       2. ESTADO DA APLICAÇÃO
+       Os dados locais são apenas uma simulação.
+    ========================================== */
+
+    const CHAVE_FAVORITOS = "entrePaginas_favoritos";
+    const CHAVE_EMPRESTIMOS = "entrePaginas_emprestimos";
+
+    function lerArmazenamento(chave, padrao) {
+      try {
+        const valor = localStorage.getItem(chave);
+        return valor ? JSON.parse(valor) : padrao;
+      } catch (erro) {
+        return padrao;
+      }
+    }
+
+    function salvarArmazenamento(chave, valor) {
+      try {
+        localStorage.setItem(chave, JSON.stringify(valor));
+      } catch (erro) {
+        console.warn("Não foi possível salvar os dados neste navegador.");
+      }
+    }
+
+    let favoritos = lerArmazenamento(CHAVE_FAVORITOS, []);
+    let emprestimos = lerArmazenamento(CHAVE_EMPRESTIMOS, []);
+    let filtroAtual = "todos";
+    let buscaAtual = "";
+    let slideAtual = 0;
+    let temporizadorCarrossel;
+    let temporizadorNotificacao;
+
+    favoritos = favoritos.filter(id => livros.some(livro => livro.id === id));
+    emprestimos = emprestimos.filter(id => livros.some(livro => livro.id === id));
+
+    const $ = seletor => document.querySelector(seletor);
+    const $$ = seletor => [...document.querySelectorAll(seletor)];
+
+    /* ==========================================
+       3. TROCA DE ABAS SEM RECARREGAR A PÁGINA
+    ========================================== */
+
+    function mostrarPagina(nome) {
+      const pagina = document.getElementById("pagina-" + nome);
+      if (!pagina) return;
+
+      $$(".pagina-conteudo").forEach(elemento => {
+        elemento.classList.remove("ativa");
+        elemento.setAttribute("aria-hidden", "true");
+      });
+
+      pagina.classList.add("ativa");
+      pagina.setAttribute("aria-hidden", "false");
+
+      $$(".aba-botao").forEach(botao => {
+        const ativo = botao.dataset.pagina === nome;
+        botao.classList.toggle("ativo", ativo);
+        botao.setAttribute("aria-current", ativo ? "page" : "false");
+      });
+
+      $("#navbarAbas").classList.remove("aberto");
+      $("#menuMobile").setAttribute("aria-expanded", "false");
+      $("#menuMobile").setAttribute("aria-label", "Abrir menu");
+
+      if (nome === "perfil") atualizarPerfil();
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    $$(".aba-botao").forEach(botao => {
+      botao.addEventListener("click", () => {
+        mostrarPagina(botao.dataset.pagina);
+      });
+    });
+
+    $$("[data-ir]").forEach(botao => {
+      botao.addEventListener("click", () => {
+        mostrarPagina(botao.dataset.ir);
+      });
+    });
+
+    $("#menuMobile").addEventListener("click", () => {
+      const menu = $("#navbarAbas");
+      const aberto = menu.classList.toggle("aberto");
+
+      $("#menuMobile").setAttribute("aria-expanded", String(aberto));
+      $("#menuMobile").setAttribute(
+        "aria-label", aberto ? "Fechar menu" : "Abrir menu"
+      );
+    });
+
+    /* ==========================================
+       4. NOTIFICAÇÕES
+    ========================================== */
+
+    function notificar(mensagem) {
+      const caixa = $("#notificacao");
+      caixa.textContent = mensagem;
+      caixa.classList.add("visivel");
+
+      clearTimeout(temporizadorNotificacao);
+
+      temporizadorNotificacao = setTimeout(() => {
+        caixa.classList.remove("visivel");
+      }, 3200);
+    }
+
+    /* ==========================================
+       5. CARROSSEL AUTOMÁTICO E MANUAL
+    ========================================== */
+
+    const slides = $$(".slide");
+    const indicadores = $$(".indicador");
+    const carrossel = $(".carrossel-container");
+
+    function mostrarSlide(indice) {
+      slideAtual = (indice + slides.length) % slides.length;
+
+      slides.forEach((slide, i) => {
+        const ativo = i === slideAtual;
+        slide.classList.toggle("ativo", ativo);
+        slide.setAttribute("aria-hidden", String(!ativo));
+      });
+
+      indicadores.forEach((indicador, i) => {
+        const ativo = i === slideAtual;
+        indicador.classList.toggle("ativo", ativo);
+        indicador.setAttribute("aria-pressed", String(ativo));
+      });
+    }
+
+    function iniciarCarrossel() {
+      clearInterval(temporizadorCarrossel);
+      temporizadorCarrossel = setInterval(() => {
+        mostrarSlide(slideAtual + 1);
+      }, 6000);
+    }
+
+    function reiniciarCarrossel() {
+      iniciarCarrossel();
+    }
+
+    $("#slideAnterior").addEventListener("click", () => {
+      mostrarSlide(slideAtual - 1);
+      reiniciarCarrossel();
+    });
+
+    $("#slideProximo").addEventListener("click", () => {
+      mostrarSlide(slideAtual + 1);
+      reiniciarCarrossel();
+    });
+
+    indicadores.forEach((indicador, indice) => {
+      indicador.addEventListener("click", () => {
+        mostrarSlide(indice);
+        reiniciarCarrossel();
+      });
+    });
+
+    carrossel.addEventListener("mouseenter", () => {
+      clearInterval(temporizadorCarrossel);
+    });
+
+    carrossel.addEventListener("mouseleave", iniciarCarrossel);
+
+    carrossel.addEventListener("focusin", () => {
+      clearInterval(temporizadorCarrossel);
+    });
+
+    carrossel.addEventListener("focusout", iniciarCarrossel);
+
+    iniciarCarrossel();
+
+    /* ==========================================
+       6. CRIAÇÃO DOS CARDS DOS LIVROS
+    ========================================== */
+
+    function obterLivro(id) {
+      return livros.find(livro => livro.id === id);
+    }
+
+    function criarCardLivro(livro) {
+      const favorito = favoritos.includes(livro.id);
+      const reservado = emprestimos.includes(livro.id);
+
+      const card = document.createElement("article");
+      card.className = "card-livro";
+
+      const capa = document.createElement("div");
+      capa.className = "livro-capa";
+
+      const imagem = document.createElement("img");
+      imagem.src = livro.capa;
+      imagem.alt = "Capa do livro " + livro.titulo;
+      imagem.loading = "lazy";
+
+      const fallback = document.createElement("div");
+      fallback.className = "livro-fallback";
+      fallback.hidden = true;
+
+      const simbolo = document.createElement("span");
+      simbolo.textContent = "📖";
+
+      const tituloFallback = document.createElement("span");
+      tituloFallback.textContent = livro.titulo;
+
+      fallback.append(simbolo, tituloFallback);
+
+      imagem.addEventListener("error", () => {
+        imagem.hidden = true;
+        fallback.hidden = false;
+      });
+
+      capa.append(imagem, fallback);
+
+      const info = document.createElement("div");
+      info.className = "livro-info";
+
+      const titulo = document.createElement("h3");
+      titulo.textContent = livro.titulo;
+
+      const autor = document.createElement("p");
+      autor.className = "livro-autor";
+      autor.textContent = livro.autor;
+
+      const status = document.createElement("span");
+      status.className = "status-livro " +
+        (livro.disponivel ? "disponivel" : "emprestado");
+
+      status.textContent = reservado
+        ? "Reservado por você"
+        : livro.disponivel ? "Disponível" : "Emprestado";
+
+      const acoes = document.createElement("div");
+      acoes.className = "livro-acoes";
+
+      const botaoDetalhes = document.createElement("button");
+      botaoDetalhes.className = "botao";
+      botaoDetalhes.textContent = "Ver detalhes";
+      botaoDetalhes.addEventListener("click", () => abrirDetalhes(livro.id));
+
+      const botaoFavorito = document.createElement("button");
+      botaoFavorito.className = "favorito-botao" +
+        (favorito ? " marcado" : "");
+      botaoFavorito.textContent = favorito ? "♥" : "♡";
+      botaoFavorito.setAttribute(
+        "aria-label",
+        favorito ? "Remover dos favoritos" : "Adicionar aos favoritos"
+      );
+      botaoFavorito.setAttribute("aria-pressed", String(favorito));
+
+      botaoFavorito.addEventListener("click", () => alternarFavorito(livro.id));
+
+      acoes.append(botaoDetalhes, botaoFavorito);
+      info.append(titulo, autor, status, acoes);
+      card.append(capa, info);
+
+      return card;
+    }
+
+    function preencherGrade(elemento, lista) {
+      elemento.replaceChildren();
+      lista.forEach(livro => elemento.appendChild(criarCardLivro(livro)));
+    }
+
+    function atualizarRecomendados() {
+      preencherGrade($("#livrosRecomendados"), livros.slice(0, 4));
+    }
+
+    /* ==========================================
+       7. PESQUISA E FILTROS DO ACERVO
+    ========================================== */
+
+    function obterLivrosFiltrados() {
+      return livros.filter(livro => {
+        const texto = (livro.titulo + " " + livro.autor + " " +
+          livro.categoria).toLocaleLowerCase("pt-BR");
+
+        const combinaBusca = texto.includes(
+          buscaAtual.toLocaleLowerCase("pt-BR")
+        );
+
+        let combinaFiltro = true;
+
+        if (filtroAtual === "disponivel") {
+          combinaFiltro = livro.disponivel && !emprestimos.includes(livro.id);
+        } else if (filtroAtual === "emprestado") {
+          combinaFiltro = !livro.disponivel || emprestimos.includes(livro.id);
+        } else if (filtroAtual === "favoritos") {
+          combinaFiltro = favoritos.includes(livro.id);
+        }
+
+        return combinaBusca && combinaFiltro;
+      });
+    }
+
+    function atualizarAcervo() {
+      const resultados = obterLivrosFiltrados();
+
+      preencherGrade($("#gradeAcervo"), resultados);
+
+      $("#resultadoContagem").textContent =
+        resultados.length + (resultados.length === 1
+          ? " livro encontrado"
+          : " livros encontrados");
+
+      $("#mensagemVazia").hidden = resultados.length !== 0;
+      $("#gradeAcervo").hidden = resultados.length === 0;
+    }
+
+    $("#formBusca").addEventListener("submit", evento => {
+      evento.preventDefault();
+      buscaAtual = $("#campoBusca").value.trim();
+      atualizarAcervo();
+    });
+
+    $("#campoBusca").addEventListener("input", evento => {
+      buscaAtual = evento.target.value.trim();
+      atualizarAcervo();
+    });
+
+    $$(".filtro-botao").forEach(botao => {
+      botao.addEventListener("click", () => {
+        filtroAtual = botao.dataset.filtro;
+
+        $$(".filtro-botao").forEach(item => {
+          item.classList.toggle("ativo", item === botao);
+        });
+
+        atualizarAcervo();
+      });
+    });
+
+    /* ==========================================
+       8. FAVORITOS
+    ========================================== */
+
+    function alternarFavorito(id) {
+      if (favoritos.includes(id)) {
+        favoritos = favoritos.filter(item => item !== id);
+        notificar("Livro removido dos favoritos.");
+      } else {
+        favoritos.push(id);
+        notificar("Livro adicionado aos favoritos! ♥");
+      }
+
+      salvarArmazenamento(CHAVE_FAVORITOS, favoritos);
+      atualizarTudo();
+    }
+
+    /* ==========================================
+       9. MODAL DE DETALHES E RESERVAS
+    ========================================== */
+
+    let livroModalAtual = null;
+    let focoAnterior = null;
+
+    function abrirModal() {
+      focoAnterior = document.activeElement;
+      $("#modalFundo").classList.add("aberto");
+      $("#fecharModal").focus();
+    }
+
+    function fecharModal() {
+      $("#modalFundo").classList.remove("aberto");
+      livroModalAtual = null;
+
+      if (focoAnterior && typeof focoAnterior.focus === "function") {
+        focoAnterior.focus();
+      }
+    }
+
+    function abrirDetalhes(id) {
+      const livro = obterLivro(id);
+      if (!livro) return;
+
+      livroModalAtual = id;
+
+      $("#modalTitulo").textContent = livro.titulo;
+
+      const corpo = $("#modalCorpo");
+      corpo.replaceChildren();
+
+      const autor = document.createElement("p");
+      autor.textContent = "Autor(a): " + livro.autor;
+
+      const categoria = document.createElement("p");
+      categoria.textContent = "Categoria: " + livro.categoria;
+
+      const descricao = document.createElement("p");
+      descricao.textContent = livro.descricao;
+
+      const status = document.createElement("p");
+      status.textContent = emprestimos.includes(id)
+        ? "Você já reservou este livro."
+        : livro.disponivel
+          ? "Este livro está disponível para reserva."
+          : "Este livro está emprestado no momento.";
+
+      corpo.append(autor, categoria, descricao, status);
+
+      const acoes = $("#modalAcoes");
+      acoes.replaceChildren();
+
+      const botaoFechar = document.createElement("button");
+      botaoFechar.className = "botao botao-secundario";
+      botaoFechar.textContent = "Fechar";
+      botaoFechar.addEventListener("click", fecharModal);
+      acoes.appendChild(botaoFechar);
+
+      if (livro.disponivel && !emprestimos.includes(id)) {
+        const botaoReservar = document.createElement("button");
+        botaoReservar.className = "botao";
+        botaoReservar.textContent = "Reservar livro";
+        botaoReservar.addEventListener("click", () => reservarLivro(id));
+        acoes.appendChild(botaoReservar);
+      } else if (emprestimos.includes(id)) {
+        const botaoCancelar = document.createElement("button");
+        botaoCancelar.className = "botao";
+        botaoCancelar.textContent = "Cancelar reserva";
+        botaoCancelar.addEventListener("click", () => cancelarReserva(id));
+        acoes.appendChild(botaoCancelar);
+      }
+
+      abrirModal();
+    }
+
+    function reservarLivro(id) {
+      const livro = obterLivro(id);
+      if (!livro) return;
+
+      if (!livro.disponivel) {
+        notificar("Este livro está emprestado no momento.");
+        fecharModal();
+        return;
+      }
+
+      if (emprestimos.includes(id)) {
+        notificar("Você já reservou este livro.");
+        fecharModal();
+        return;
+      }
+
+      emprestimos.push(id);
+      salvarArmazenamento(CHAVE_EMPRESTIMOS, emprestimos);
+
+      fecharModal();
+      atualizarTudo();
+      notificar("Reserva simulada realizada: " + livro.titulo);
+    }
+
+    function cancelarReserva(id) {
+      emprestimos = emprestimos.filter(item => item !== id);
+      salvarArmazenamento(CHAVE_EMPRESTIMOS, emprestimos);
+
+      fecharModal();
+      atualizarTudo();
+      notificar("Reserva simulada cancelada.");
+    }
+
+    $("#fecharModal").addEventListener("click", fecharModal);
+
+    $("#modalFundo").addEventListener("click", evento => {
+      if (evento.target === $("#modalFundo")) fecharModal();
+    });
+
+    document.addEventListener("keydown", evento => {
+      if (evento.key === "Escape") fecharModal();
+    });
+
+    /* ==========================================
+       10. PERFIL DO LEITOR
+    ========================================== */
+
+    function atualizarPerfil() {
+      $("#totalEmprestimos").textContent = emprestimos.length;
+      $("#totalFavoritos").textContent = favoritos.length;
+
+      const listaEmprestimos = $("#listaEmprestimos");
+      listaEmprestimos.replaceChildren();
+
+      if (emprestimos.length === 0) {
+        const vazio = document.createElement("div");
+        vazio.className = "perfil-vazio";
+        vazio.textContent =
+          "Você ainda não tem reservas. Explore o acervo para escolher sua próxima leitura.";
+        listaEmprestimos.appendChild(vazio);
+      } else {
+        emprestimos.forEach(id => {
+          const livro = obterLivro(id);
+          if (!livro) return;
+
+          const item = document.createElement("article");
+          item.className = "emprestimo-item";
+
+          const texto = document.createElement("div");
+          const titulo = document.createElement("h3");
+          titulo.textContent = livro.titulo;
+
+          const autor = document.createElement("p");
+          autor.textContent = livro.autor + " · Reserva demonstrativa";
+
+          const status = document.createElement("p");
+          status.textContent = "Reserva registrada neste navegador.";
+
+          texto.append(titulo, autor, status);
+
+          const botao = document.createElement("button");
+          botao.className = "botao botao-secundario";
+          botao.textContent = "Cancelar reserva";
+          botao.addEventListener("click", () => cancelarReserva(id));
+
+          item.append(texto, botao);
+          listaEmprestimos.appendChild(item);
+        });
+      }
+
+      const livrosFavoritos = favoritos.map(obterLivro).filter(Boolean);
+
+      preencherGrade($("#gradeFavoritos"), livrosFavoritos);
+      $("#gradeFavoritos").hidden = livrosFavoritos.length === 0;
+      $("#favoritosVazios").hidden = livrosFavoritos.length !== 0;
+    }
+
+    /* ==========================================
+       11. ATUALIZAÇÃO GERAL DA INTERFACE
+    ========================================== */
+
+    function atualizarTudo() {
+      atualizarRecomendados();
+      atualizarAcervo();
+      atualizarPerfil();
+    }
+
+    /* ==========================================
+       12. INICIALIZAÇÃO
+    ========================================== */
+
+    $("#anoAtual").textContent = new Date().getFullYear();
+
+    mostrarSlide(0);
+    atualizarTudo();
+
+  </script>
 
 </body>
 </html>
