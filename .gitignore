@@ -13,3 +13,8 @@ node_modules/
 .env
 .env.*
 !.env.example
+# Configuração local do banco de dados
+/conexao.php
+# Configurações locais do banco de dados
+/conexao.php
+/includes/conexao.php
