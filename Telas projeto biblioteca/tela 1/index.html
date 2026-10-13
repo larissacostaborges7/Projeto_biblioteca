@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cadastro | Entre Páginas</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- O onsubmit agora está aqui no formulário principal -->
+    <form id="formCadastro" onsubmit="return verificarSenha(event)">
+
+        <h1>Cadastro</h1>
+
+        <!-- Tipo de cadastro -->
+        <label for="tipo">Tipo de cadastro:</label>
+        <select id="tipo" name="tipo" required>
+            <option value="">Selecione</option>
+            <option value="usuario">Usuário</option>
+            <option value="funcionario">Funcionário</option>
+        </select>
+
+        <!-- Nome -->
+        <label for="nome">Nome:</label>
+        <input
+            type="text"
+            id="nome"
+            name="nome"
+            placeholder="Digite seu nome completo"
+            required
+        >
+
+        <!-- CPF -->
+        <label for="cpf">CPF:</label>
+        <input
+            type="text"
+            id="cpf"
+            name="cpf"
+            placeholder="Digite seu CPF"
+            inputmode="numeric"
+            pattern="[0-9]+"
+            required
+        >
+
+        <!-- Data de nascimento -->
+        <label for="dataNascimento">Data de nascimento:</label>
+        <input
+            type="date"
+            id="dataNascimento"
+            name="dataNascimento"
+            required
+        >
+
+        <!-- Email -->
+        <label for="email">E-mail:</label>
+        <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Digite seu e-mail"
+            required
+        >
+
+        <!-- Celular -->
+        <label for="celular">Telefone:</label>
+        <input
+            type="text"
+            id="celular"
+            name="celular"
+            placeholder="Digite seu telefone"
+            inputmode="numeric"
+            pattern="[0-9]+"
+            required
+        >
+
+        <!-- Endereço -->
+        <label for="endereco">Endereço:</label>
+        <input
+            type="text"
+            id="endereco"
+            name="endereco"
+            placeholder="Digite seu endereço"
+            required
+        >
+
+        <!-- Bairro -->
+        <label for="bairro">Bairro:</label>
+        <input
+            type="text"
+            id="bairro"
+            name="bairro"
+            placeholder="Digite seu bairro"
+            required
+        >
+
+        <!-- Cidade -->
+        <label for="cidade">Cidade:</label>
+        <input
+            type="text"
+            id="cidade"
+            name="cidade"
+            placeholder="Digite sua cidade"
+            required
+        >
+
+        <!-- Senha -->
+        <label for="senha">Senha:</label>
+        <input
+            type="password"
+            id="senha"
+            name="senha"
+            placeholder="Digite sua senha"
+            required
+        >
+
+        <!-- Confirmar senha -->
+        <label for="confirmarSenha">Confirmar senha:</label>
+        <input
+            type="password"
+            id="confirmarSenha"
+            name="confirmarSenha"
+            placeholder="Digite a senha novamente"
+            required
+        >
+
+        <!-- Mensagem de sucesso ou erro (fica dentro do form para acompanhar o layout) -->
+        <div id="mensagem"></div>
+
+        <!-- Botão único de submissão -->
+        <button type="submit">Cadastrar</button>
+
+    </form>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+
+</body>
+
+</html>
