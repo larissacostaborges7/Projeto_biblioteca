@@ -1,9 +1,12 @@
-```php
 <?php
 
 require_once __DIR__ . '/../includes/conexao.php';
 
 $mensagem = '';
+$nome = '';
+$cpf = '';
+$nascimento = '';
+$email = '';
 $cadastroSucesso = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -15,9 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $endereco = trim($_POST['endereco'] ?? '');
     $numero = trim($_POST['numero'] ?? '');
 $bairro = trim($_POST['bairro'] ?? '');
+$cidade = trim($_POST['cidade'] ?? '');
     $senha = $_POST['senha'] ?? '';
     $confirmacao = $_POST['confirmacao'] ?? '';
-
+}
     if (
         $nome === '' || $cpf === '' || $nascimento === '' ||
         $email === '' || $senha === '' || $confirmacao === ''
@@ -43,10 +47,10 @@ $bairro = trim($_POST['bairro'] ?? '');
         try {
             $hash = password_hash($senha, PASSWORD_DEFAULT);
 
-            $sql = "INSERT INTO usuarios
+$sql = "INSERT INTO usuarios
         (nome, cpf, data_nascimento, email, senha,
-         telefone, endereco, numero, bairro)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+         telefone, endereco, numero, bairro, cidade)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 $stmt = $conexao->prepare($sql);
 
@@ -59,21 +63,23 @@ $stmt->execute([
     $telefone ?: null,
     $endereco ?: null,
     $numero ?: null,
-    $bairro ?: null
+    $bairro ?: null,
+    $cidade ?: null
 ]);
 
             $mensagem = 'Cadastro realizado com sucesso! Você já pode entrar.';
             $cadastroSucesso = true;
 
-        } catch (PDOException $erro) {
-            if ($erro->getCode() === '23000') {
-                $mensagem = 'Este CPF ou e-mail já está cadastrado.';
-            } else {
-                $mensagem = 'Não foi possível concluir o cadastro.';
-            }
-        }
+} catch (PDOException $erro) {
+    if ($erro->getCode() === '23000') {
+        $mensagem = 'Este CPF ou e-mail já está cadastrado.';
+    } else {
+        error_log('Erro no cadastro de usuário: ' . $erro->getMessage());
+        $mensagem = 'Erro no cadastro. Confira o log de erros do PHP.';
     }
 }
+    }
+
 ?>
 
 <!DOCTYPE html>
@@ -82,9 +88,9 @@ $stmt->execute([
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../asserts/style.css/cadastro.css">
 
     <title>Cadastro de Leitor</title>
-    <p>TESTE DA PÁGINA</p>
 
     <style>
         body {
@@ -242,6 +248,14 @@ $stmt->execute([
     maxlength="100"
 >
 <br><br>
+
+<label for="cidade">Cidade:</label>
+<input
+    type="text"
+    id="cidade"
+    name="cidade"
+    maxlength="100"
+>
         <br><br>
 
         <label for="senha">Senha: *</label>
@@ -401,4 +415,3 @@ $stmt->execute([
 
 </body>
 </html>
-```

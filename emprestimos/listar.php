@@ -1,4 +1,4 @@
-```php
+
 <?php
 session_start();
 
@@ -135,4 +135,4 @@ $emprestimos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 </body>
 </html>
-```
+

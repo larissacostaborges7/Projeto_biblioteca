@@ -1,4 +1,4 @@
-```php
+
 <?php
 session_start();
 
@@ -220,4 +220,4 @@ $exemplares = $stmtExemplares->fetchAll(PDO::FETCH_ASSOC);
 
 </body>
 </html>
-```
+
