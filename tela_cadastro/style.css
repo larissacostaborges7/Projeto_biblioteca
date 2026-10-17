@@ -1,0 +1,363 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --azul-escuro: #102c3a;
+    --azul: #17495a;
+    --azul-claro: #eaf3f5;
+    --dourado: #d6ad60;
+    --dourado-escuro: #b98c3f;
+    --branco: #ffffff;
+    --texto: #253943;
+    --cinza: #71818a;
+    --borda: #d9e2e5;
+    --erro: #c0392b;
+    --sucesso: #20804c;
+}
+
+body {
+    min-height: 100vh;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: var(--texto);
+    background:
+        radial-gradient(circle at top left, #28596a 0, transparent 38%),
+        linear-gradient(135deg, #0c2430, #173d4a 55%, #102c3a);
+        
+}
+
+/* PÁGINA */
+.pagina {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 16px;
+}
+
+.cabecalho {
+    text-align: center;
+    color: var(--branco);
+    margin-bottom: 25px;
+}
+
+.logo {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 34px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.logo span {
+    color: var(--dourado);
+}
+
+.cabecalho p {
+    margin-top: 8px;
+    color: #d6e4e8;
+    font-size: 14px;
+}
+
+/* CARTÃO COM EFEITO 3D */
+.flip-card {
+    width: 100%;
+    max-width: 470px;
+    height: 600px;
+    perspective: 1400px;
+    transition: height 0.35s ease;
+}
+
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+    transition: transform 0.8s ease-in-out;
+    -webkit-transition: transform 0.8s ease-in-out;
+}
+
+.flip-card.is-flipped .flip-card-inner {
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg); 
+}
+
+/* FRENTE E VERSO */
+.face {
+   position: absolute; 
+   inset: 0; 
+   width: 100%; 
+   height: 100%; 
+   overflow-y: auto; 
+   overflow-x: hidden; padding: 34px; 
+   background: var(--branco); border: 1px solid rgba(214, 173, 96, 0.65); 
+   border-radius: 22px; 
+   box-shadow: 0 25px 70px rgba(0, 0, 0, 0.3); 
+   backface-visibility: hidden; 
+   -webkit-backface-visibility: hidden; 
+   scrollbar-width: thin; 
+   scrollbar-color: var(--dourado) #f1f3f4;
+    
+}
+
+.face-back {
+    transform: rotateY(180deg);
+}
+
+/* CONTEÚDO */
+.conteudo {
+    width: 100%;
+}
+
+.icone-livro {
+    width: 58px;
+    height: 58px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 16px;
+    background: var(--azul-claro);
+    border-radius: 18px;
+    font-size: 28px;
+}
+
+h1 {
+    text-align: center;
+    color: var(--azul-escuro);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.subtitulo {
+    text-align: center;
+    color: var(--cinza);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 27px;
+}
+
+/* CAMPOS */
+.campo {
+    margin-bottom: 17px;
+}
+
+.campo label {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--azul-escuro);
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.campo input,
+.campo select {
+    display: block;
+    width: 100%;
+    min-height: 46px;
+    padding: 12px 13px;
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+    background: #fbfcfc;
+    color: var(--texto);
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.campo input::placeholder {
+    color: #a0adb3;
+}
+
+.campo input:focus,
+.campo select:focus {
+    border-color: var(--dourado-escuro);
+    box-shadow: 0 0 0 3px rgba(214, 173, 96, 0.16);
+}
+
+/* CAMPO DE SENHA E BOTÃO DO OLHO */
+.senha-container {
+    position: relative;
+}
+
+.senha-container input {
+    padding-right: 48px;
+}
+
+.btn-olho {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: var(--azul);
+    font-size: 19px;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.btn-olho:hover {
+    color: var(--dourado-escuro);
+}
+
+/* BOTÕES PRINCIPAIS */
+.btn-principal {
+    display: block;
+    width: 100%;
+    padding: 14px 18px;
+    margin-top: 12px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--dourado), var(--dourado-escuro));
+    color: #172c34;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s, filter 0.2s, box-shadow 0.2s;
+}
+
+.btn-principal:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.04);
+    box-shadow: 0 8px 18px rgba(185, 140, 63, 0.25);
+}
+
+.btn-principal:disabled {
+    opacity: 0.65;
+    cursor: wait;
+    transform: none;
+}
+
+/* ALTERNAR ENTRE LOGIN E CADASTRO */
+.troca-tela {
+    margin-top: 23px;
+    text-align: center;
+    color: var(--cinza);
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.link-tela {
+    border: none;
+    background: none;
+    color: var(--azul);
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.link-tela:hover {
+    color: var(--dourado-escuro);
+}
+
+/* RESPONSÁVEL LEGAL */
+.secao-responsavel {
+    padding: 17px;
+    margin-bottom: 20px;
+    background: #f5f9fa;
+    border: 1px solid #d7e6e9;
+    border-left: 4px solid var(--dourado);
+    border-radius: 12px;
+}
+
+.secao-responsavel h2 {
+    margin-bottom: 8px;
+    color: var(--azul-escuro);
+    font-size: 17px;
+}
+
+.secao-responsavel > p {
+    margin-bottom: 18px;
+    color: var(--cinza);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* REQUISITOS DA SENHA */
+.requisitos {
+    margin-top: 10px;
+    padding: 11px 12px;
+    background: #f6f8f9;
+    border-radius: 9px;
+}
+
+.requisitos p {
+    margin: 5px 0;
+    color: var(--cinza);
+    font-size: 12px;
+}
+
+.requisitos p.validado {
+    color: var(--sucesso);
+    font-weight: 600;
+}
+
+/* MENSAGENS */
+.mensagem {
+    min-height: 0;
+    margin-top: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.mensagem:empty {
+    display: none;
+}
+
+.mensagem.erro {
+    color: var(--erro);
+}
+
+.mensagem.sucesso {
+    color: var(--sucesso);
+}
+
+/* RODAPÉ */
+footer {
+    margin-top: 25px;
+    text-align: center;
+    color: #d6e4e8;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* CAMPOS ESCONDIDOS */
+[hidden] {
+    display: none !important;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 520px) {
+    .pagina {
+        padding: 22px 12px;
+    }
+
+    .logo {
+        font-size: 29px;
+    }
+
+    .flip-card {
+        max-width: 100%;
+    }
+
+    .face {
+        padding: 25px 20px;
+        border-radius: 17px;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .subtitulo {
+        font-size: 13px;
+    }
+}
