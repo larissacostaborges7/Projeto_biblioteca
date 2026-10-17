@@ -70,6 +70,10 @@ if (isset($_GET['vazio'])) {
     <p>
         <a href="../index.php">Voltar ao início</a>
     </p>
+    <p>
+    Ainda não tem cadastro?
+    <a href="../tela_cadastro/index.php">Criar minha conta</a>
+</p>
 
 </body>
 </html>

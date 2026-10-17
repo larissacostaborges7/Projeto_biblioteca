@@ -1,53 +1,58 @@
-```php
+
 <?php
 session_start();
 
 require_once __DIR__ . '/../includes/conexao.php';
 
-header('Content-Type: application/json; charset=utf-8');
-
-function responder(bool $sucesso, string $mensagem): void
-{
-    echo json_encode([
-        'sucesso' => $sucesso,
-        'mensagem' => $mensagem
-    ], JSON_UNESCAPED_UNICODE);
-
+// Aceita somente requisições POST.
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: usuario.php');
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405);
-    responder(false, 'Método não permitido.');
-}
-
-$cpfBruto = trim($_POST['cpf'] ?? '');
+// Recebe e trata os dados do formulário.
+$cpf = preg_replace('/\D/', '', trim($_POST['cpf'] ?? ''));
 $senha = $_POST['senha'] ?? '';
 
-if ($cpfBruto === '' || $senha === '') {
-    responder(false, 'Preencha o CPF e a senha.');
+// Valida os campos.
+if ($cpf === '' || $senha === '') {
+    header('Location: usuario.php?erro=vazio');
+    exit;
 }
 
-$cpf = preg_replace('/\D/', '', $cpfBruto);
+try {
+    // Busca o leitor pelo CPF.
+    $sql = "SELECT id_usuario, nome, cpf, senha
+            FROM usuarios
+            WHERE cpf = ?
+            LIMIT 1";
 
-$sql = "SELECT id_usuario, nome, senha
-        FROM usuarios
-        WHERE cpf = ?
-        LIMIT 1";
+    $stmt = $conexao->prepare($sql);
+    $stmt->execute([$cpf]);
 
-$stmt = $conexao->prepare($sql);
-$stmt->execute([$cpf]);
+    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+    // Verifica o usuário e a senha.
+    if (!$usuario || !password_verify($senha, $usuario['senha'])) {
+        header('Location: usuario.php?erro=1');
+        exit;
+    }
 
-if (!$usuario || !password_verify($senha, $usuario['senha'])) {
-    responder(false, 'CPF ou senha incorretos.');
+    // Gera um novo identificador de sessão.
+    session_regenerate_id(true);
+
+    // Salva os dados do leitor na sessão.
+    $_SESSION['id_usuario'] = (int) $usuario['id_usuario'];
+    $_SESSION['nome_usuario'] = $usuario['nome'];
+
+    // Redireciona para o painel do leitor.
+    header('Location: ../painel/usuario.php');
+    exit;
+
+} catch (PDOException $e) {
+    // Registra detalhes técnicos apenas no log do servidor.
+    error_log($e->getMessage());
+
+    header('Location: usuario.php?erro=conexao');
+    exit;
 }
-
-session_regenerate_id(true);
-
-$_SESSION['id_usuario'] = (int) $usuario['id_usuario'];
-$_SESSION['nome_usuario'] = $usuario['nome'];
-
-responder(true, 'Login realizado com sucesso!');
-```

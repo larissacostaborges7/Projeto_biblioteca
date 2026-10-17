@@ -1,55 +1,70 @@
+
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+session_start();
 
 require_once __DIR__ . '/../includes/conexao.php';
 
-// Se não for POST, volta para o login
+// Aceita somente requisições POST.
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: servidor.php');
     exit;
 }
 
-$cpf = trim($_POST['cpf'] ?? '');
+// Recebe e trata os dados do formulário.
+$cpf = preg_replace('/\D/', '', trim($_POST['cpf'] ?? ''));
 $senha = $_POST['senha'] ?? '';
 
-// Remove formatação do CPF para bater com o banco
-$cpf = preg_replace('/\D/', '', $cpf);
-
+// Verifica os campos.
 if ($cpf === '' || $senha === '') {
     header('Location: servidor.php?erro=vazio');
     exit;
 }
 
 try {
-    $sql = "SELECT id_funcionario, nome, cpf, senha, cargo
+    // Busca o funcionário ativo pelo CPF.
+    $sql = "SELECT
+                id_funcionario,
+                nome,
+                cpf,
+                senha,
+                cargo
             FROM funcionarios
-            WHERE cpf = ? AND ativo = TRUE
+            WHERE cpf = ?
+              AND ativo = 1
             LIMIT 1";
 
     $stmt = $conexao->prepare($sql);
     $stmt->execute([$cpf]);
+
     $funcionario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($funcionario && password_verify($senha, $funcionario['senha'])) {
-        session_regenerate_id(true);
-
-        $_SESSION['id_funcionario'] = $funcionario['id_funcionario'];
-        $_SESSION['nome_funcionario'] = $funcionario['nome'];
-        $_SESSION['cargo'] = $funcionario['cargo'];
-
-        // Redireciona para o painel do servidor com sucesso
-        header('Location: ../painel/servidor.php');
+    // Confere se o funcionário existe e se a senha está correta.
+    if (
+        !$funcionario ||
+        !password_verify($senha, $funcionario['senha'])
+    ) {
+        header('Location: servidor.php?erro=1');
         exit;
     }
 
-    // Se a senha estiver errada ou usuário não encontrado
-    header('Location: servidor.php?erro=1');
+    // Renova o identificador da sessão.
+    session_regenerate_id(true);
+
+    // Salva os dados do funcionário na sessão.
+    $_SESSION['id_funcionario'] =
+        (int) $funcionario['id_funcionario'];
+
+    $_SESSION['nome_funcionario'] = $funcionario['nome'];
+    $_SESSION['cargo'] = $funcionario['cargo'];
+
+    // Redireciona para o painel do servidor.
+    header('Location: ../painel/servidor.php');
     exit;
 
 } catch (PDOException $e) {
+    // Registra o erro técnico no log do servidor.
     error_log($e->getMessage());
+
     header('Location: servidor.php?erro=conexao');
     exit;
 }

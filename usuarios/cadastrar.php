@@ -11,7 +11,7 @@ $cadastroSucesso = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome = trim($_POST['nome'] ?? '');
-    $cpf = trim($_POST['cpf'] ?? '');
+    $cpf = preg_replace('/\D/', '', trim($_POST['cpf'] ?? ''));
     $nascimento = $_POST['data_nascimento'] ?? '';
     $email = trim($_POST['email'] ?? '');
     $telefone = trim($_POST['telefone'] ?? '');

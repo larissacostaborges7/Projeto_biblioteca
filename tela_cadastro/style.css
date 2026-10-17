@@ -361,3 +361,27 @@ footer {
         font-size: 13px;
     }
 }
+
+.botoes-acesso {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 25px;
+}
+
+.botao {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #315b45;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.botao:hover {
+    background-color: #234331;
+    transform: translateY(-2px);
+}
