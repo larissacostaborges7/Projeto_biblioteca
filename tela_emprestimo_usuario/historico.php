@@ -1,11 +1,12 @@
-
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 require_once __DIR__ . '/../includes/conexao.php';
 
 if (!isset($_SESSION['id_usuario'])) {
-    header('Location: ../login/usuario.php');
+    header('Location: ../tela_cadastro/index.php');
     exit;
 }
 
@@ -45,9 +46,7 @@ function formatarData($data) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Histórico de Empréstimos</title>
-
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -58,12 +57,12 @@ function formatarData($data) {
     </header>
 
     <nav>
-        <a href="../painel/usuario.php">Início</a>
+        <a href="../tela_principal2/index.php">Início</a>
         <a href="index.php">Meus empréstimos</a>
         <a href="reservas.php">Minhas reservas</a>
         <a href="historico.php">Histórico</a>
         <a href="../livros/listar.php">Consultar livros</a>
-        <a href="../login/sair_usuario.php">Sair</a>
+        <a href="../tela_cadastro/sair_usuario.php">Sair</a>
     </nav>
 
     <main>

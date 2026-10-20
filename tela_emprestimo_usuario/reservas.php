@@ -1,4 +1,3 @@
-```php
 <?php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -139,7 +138,7 @@ if (!$naoLogado) {
 <body>
 
 <aside class="menu-lateral">
-    <a href="../painel/usuario.php" class="logo">
+    <a href="../tela_principal2/index.php" class="logo">
         <span class="logo-icone">📚</span>
         <span class="logo-texto">
             <span class="logo-nome">Biblioteca Municipal</span>
@@ -150,7 +149,7 @@ if (!$naoLogado) {
     <span class="menu-titulo">Área do leitor</span>
 
     <nav>
-        <a href="../painel/usuario.php">
+        <a href="../tela_principal2/index.php">
             <span>⌂</span> Início
         </a>
 
@@ -166,13 +165,13 @@ if (!$naoLogado) {
             <span>◷</span> Histórico
         </a>
 
-        <a href="../livros/listar.php">
+        <a href="../tela_acervo_usuario/tela_acervo_usuario.php">
             <span>📚</span> Consultar acervo
         </a>
     </nav>
 
     <div class="menu-rodape">
-        <a href="../login/sair_usuario.php">↪ Sair da conta</a>
+        <a href="../tela_cadastro/sair_usuario.php">↪ Sair da conta</a>
     </div>
 </aside>
 
@@ -196,7 +195,7 @@ if (!$naoLogado) {
         <section class="alerta-caixa">
             <h2>Entre na sua conta</h2>
             <p>Faça login como leitor para consultar suas reservas.</p>
-            <a href="../login/usuario.php" class="botao">Entrar na conta</a>
+            <a href="../tela_cadastro/index.php" class="botao">Entrar na conta</a>
         </section>
 
     <?php else: ?>
@@ -329,4 +328,4 @@ if (!$naoLogado) {
 </main>
 
 </body>
-</html
+</html>

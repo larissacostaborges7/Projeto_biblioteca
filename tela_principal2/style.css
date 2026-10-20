@@ -1,0 +1,2157 @@
+    /* ========================================
+
+       1. IDENTIDADE VISUAL E CONFIGURAÇÕES
+
+    ======================================== */
+
+    :root {
+
+      --azul-petroleo: #244e5b;
+
+      --azul-escuro: #183943;
+
+      --azul-medio: #688b98;
+
+      --azul-claro: #dce9ed;
+
+      --azul-gelo: #f1f6f7;
+
+      --branco: #ffffff;
+
+      --cinza: #66747a;
+
+      --cinza-claro: #e5eaec;
+
+      --texto: #293b41;
+
+      --verde: #377d63;
+
+      --dourado: #c49a58;
+
+      --sombra: 0 12px 35px rgba(31, 65, 76, 0.09);
+
+      --raio: 18px;
+
+    }
+
+
+
+    * {
+
+      margin: 0;
+
+      padding: 0;
+
+      box-sizing: border-box;
+
+    }
+
+
+
+    html {
+
+      scroll-behavior: smooth;
+
+      scroll-padding-top: 100px;
+
+    }
+
+
+
+    body {
+
+      font-family: "Segoe UI", Arial, sans-serif;
+
+      background: var(--azul-gelo);
+
+      color: var(--texto);
+
+      line-height: 1.6;
+
+    }
+
+
+
+    button, input {
+
+      font: inherit;
+
+    }
+
+
+
+    button {
+
+      cursor: pointer;
+
+    }
+
+
+
+    button:focus-visible, input:focus-visible, a:focus-visible {
+
+      outline: 3px solid var(--dourado);
+
+      outline-offset: 3px;
+
+    }
+
+
+
+    img {
+
+      max-width: 100%;
+
+      display: block;
+
+    }
+
+
+
+    .container {
+
+      width: min(1180px, 92%);
+
+      margin: 0 auto;
+
+    }
+
+
+
+    .botao {
+
+      border: none;
+
+      border-radius: 10px;
+
+      padding: 12px 20px;
+
+      background: var(--azul-petroleo);
+
+      color: var(--branco);
+
+      font-weight: 600;
+
+      transition: background .25s, transform .25s;
+
+    }
+
+
+
+    .botao:hover {
+
+      background: var(--azul-escuro);
+
+      transform: translateY(-2px);
+
+    }
+
+
+
+    .botao-secundario {
+
+      background: var(--branco);
+
+      color: var(--azul-petroleo);
+
+      border: 1px solid var(--azul-claro);
+
+    }
+
+
+
+    .botao-secundario:hover {
+
+      background: var(--azul-claro);
+
+      color: var(--azul-escuro);
+
+    }
+
+
+
+    .secao {
+
+      padding: 65px 0;
+
+    }
+
+
+
+    .titulo-secao {
+
+      color: var(--azul-escuro);
+
+      font-family: Georgia, "Times New Roman", serif;
+
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+
+      margin-bottom: 10px;
+
+      line-height: 1.2;
+
+    }
+
+
+
+    .subtitulo-secao {
+
+      color: var(--cinza);
+
+      margin-bottom: 30px;
+
+    }
+
+
+
+    .etiqueta {
+
+      display: inline-block;
+
+      color: var(--azul-petroleo);
+
+      background: var(--azul-claro);
+
+      padding: 5px 11px;
+
+      border-radius: 30px;
+
+      font-size: .8rem;
+
+      font-weight: 700;
+
+      letter-spacing: .04em;
+
+      margin-bottom: 15px;
+
+    }
+
+
+
+    /* ========================================
+
+       2. CABEÇALHO E MENU SUPERIOR FIXO
+
+    ======================================== */
+
+    .navbar-superior {
+
+      position: sticky;
+
+      top: 0;
+
+      z-index: 1000;
+
+      background: rgba(255, 255, 255, .96);
+
+      backdrop-filter: blur(12px);
+
+      border-bottom: 1px solid var(--cinza-claro);
+
+    }
+
+
+
+    .navbar-interno {
+
+      min-height: 82px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 24px;
+
+    }
+
+
+
+    .logo {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 11px;
+
+      color: var(--azul-escuro);
+
+      text-decoration: none;
+
+      flex-shrink: 0;
+
+    }
+
+
+
+    .logo-icone {
+
+      width: 45px;
+
+      height: 45px;
+
+      display: grid;
+
+      place-items: center;
+
+      background: var(--azul-petroleo);
+
+      color: white;
+
+      border-radius: 13px;
+
+      font-size: 1.45rem;
+
+    }
+
+
+
+    .logo-nome {
+
+      display: block;
+
+      font: 700 1.4rem Georgia, serif;
+
+      line-height: 1.2;
+
+    }
+
+
+
+    .logo-descricao {
+
+      display: block;
+
+      font-size: .68rem;
+
+      color: var(--cinza);
+
+      letter-spacing: .12em;
+
+      text-transform: uppercase;
+
+    }
+
+
+
+    .navbar-abas {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 5px;
+
+    }
+
+
+
+    .aba-botao {
+
+      border: none;
+
+      background: transparent;
+
+      color: var(--cinza);
+
+      padding: 11px 16px;
+
+      border-radius: 10px;
+
+      font-weight: 600;
+
+      transition: all .25s;
+
+      white-space: nowrap;
+
+    }
+
+
+
+    .aba-botao:hover {
+
+      background: var(--azul-gelo);
+
+      color: var(--azul-petroleo);
+
+    }
+
+
+
+    .aba-botao.ativo {
+
+      background: var(--azul-petroleo);
+
+      color: white;
+
+    }
+
+
+
+    .menu-mobile {
+
+      display: none;
+
+      border: 1px solid var(--cinza-claro);
+
+      background: white;
+
+      color: var(--azul-petroleo);
+
+      border-radius: 9px;
+
+      padding: 8px 12px;
+
+      font-size: 1.3rem;
+
+    }
+
+
+
+    /* ========================================
+
+       3. SISTEMA DE PÁGINAS / SPA
+
+    ======================================== */
+
+    .pagina-conteudo {
+
+      display: none;
+
+      min-height: 70vh;
+
+      animation: entrada .4s ease both;
+
+    }
+
+
+
+    .pagina-conteudo.ativa {
+
+      display: block;
+
+    }
+
+
+
+    @keyframes entrada {
+
+      from {
+
+        opacity: 0;
+
+        transform: translateY(9px);
+
+      }
+
+      to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+      }
+
+    }
+
+
+
+    /* ========================================
+
+       4. CARROSSEL DA TELA INICIAL
+
+    ======================================== */
+
+    .carrossel-container {
+
+      position: relative;
+
+      overflow: hidden;
+
+      min-height: 390px;
+
+      margin-top: 28px;
+
+      border-radius: 24px;
+
+      background: var(--azul-petroleo);
+
+      color: white;
+
+      box-shadow: var(--sombra);
+
+    }
+
+
+
+    .carrossel-slides {
+
+      position: relative;
+
+      min-height: 390px;
+
+    }
+
+
+
+    .slide {
+
+      position: absolute;
+
+      inset: 0;
+
+      display: grid;
+
+      grid-template-columns: 1.15fr .85fr;
+
+      align-items: center;
+
+      gap: 30px;
+
+      padding: 45px 70px;
+
+      opacity: 0;
+
+      visibility: hidden;
+
+      transform: translateX(18px);
+
+      transition: opacity .55s ease, transform .55s ease, visibility .55s;
+
+      background: linear-gradient(120deg, #244e5b, #527b87);
+
+    }
+
+
+
+    .slide:nth-child(2) {
+
+      background: linear-gradient(120deg, #374e59, #829da5);
+
+    }
+
+
+
+    .slide:nth-child(3) {
+
+      background: linear-gradient(120deg, #244e5b, #777b79);
+
+    }
+
+
+
+    .slide.ativo {
+
+      position: relative;
+
+      opacity: 1;
+
+      visibility: visible;
+
+      transform: translateX(0);
+
+    }
+
+
+
+    .slide-texto {
+
+      max-width: 560px;
+
+    }
+
+
+
+    .slide .etiqueta {
+
+      background: rgba(255,255,255,.15);
+
+      color: white;
+
+    }
+
+
+
+    .slide h2 {
+
+      font: 700 clamp(2rem, 4vw, 3.3rem)/1.15 Georgia, serif;
+
+      margin-bottom: 17px;
+
+    }
+
+
+
+    .slide p {
+
+      color: #edf4f5;
+
+      margin-bottom: 25px;
+
+      max-width: 510px;
+
+    }
+
+
+
+    .slide .botao {
+
+      background: white;
+
+      color: var(--azul-escuro);
+
+    }
+
+
+
+    .slide-ilustracao {
+
+      display: grid;
+
+      place-items: center;
+
+      min-height: 240px;
+
+      font-size: clamp(7rem, 16vw, 12rem);
+
+      filter: drop-shadow(0 16px 18px rgba(0,0,0,.2));
+
+    }
+
+
+
+    .carrossel-seta {
+
+      position: absolute;
+
+      z-index: 3;
+
+      top: 50%;
+
+      transform: translateY(-50%);
+
+      width: 43px;
+
+      height: 43px;
+
+      border-radius: 50%;
+
+      border: 1px solid rgba(255,255,255,.35);
+
+      background: rgba(255,255,255,.15);
+
+      color: white;
+
+      font-size: 1.5rem;
+
+      display: grid;
+
+      place-items: center;
+
+      transition: background .2s;
+
+    }
+
+
+
+    .carrossel-seta:hover {
+
+      background: rgba(255,255,255,.3);
+
+    }
+
+
+
+    .carrossel-anterior { left: 15px; }
+
+    .carrossel-proximo { right: 15px; }
+
+
+
+    .carrossel-indicadores {
+
+      position: absolute;
+
+      bottom: 18px;
+
+      left: 0;
+
+      right: 0;
+
+      display: flex;
+
+      justify-content: center;
+
+      gap: 9px;
+
+      z-index: 5;
+
+    }
+
+
+
+    .indicador {
+
+      border: none;
+
+      width: 9px;
+
+      height: 9px;
+
+      border-radius: 50px;
+
+      background: rgba(255,255,255,.5);
+
+      transition: width .25s, background .25s;
+
+    }
+
+
+
+    .indicador.ativo {
+
+      width: 27px;
+
+      background: white;
+
+    }
+
+
+
+    /* ========================================
+
+       5. BOAS-VINDAS E RECOMENDAÇÕES
+
+    ======================================== */
+
+    .boas-vindas {
+
+      padding-top: 55px;
+
+    }
+
+
+
+    .boas-vindas-topo {
+
+      display: flex;
+
+      align-items: end;
+
+      justify-content: space-between;
+
+      gap: 20px;
+
+      margin-bottom: 28px;
+
+    }
+
+
+
+    .boas-vindas-topo p {
+
+      max-width: 640px;
+
+      color: var(--cinza);
+
+    }
+
+
+
+    .grade-livros {
+
+      display: grid;
+
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+
+      gap: 22px;
+
+    }
+
+
+
+    .card-livro {
+
+      min-width: 0;
+
+      background: white;
+
+      border: 1px solid var(--cinza-claro);
+
+      border-radius: var(--raio);
+
+      overflow: hidden;
+
+      transition: transform .25s, box-shadow .25s;
+
+    }
+
+
+
+    .card-livro:hover {
+
+      transform: translateY(-5px);
+
+      box-shadow: var(--sombra);
+
+    }
+
+
+
+    .livro-capa {
+
+      height: 220px;
+
+      position: relative;
+
+      overflow: hidden;
+
+      display: grid;
+
+      place-items: center;
+
+      padding: 18px;
+
+      background: #dce9ed;
+
+    }
+
+
+
+    .livro-capa img {
+
+      width: 100%;
+
+      height: 100%;
+
+      object-fit: contain;
+
+      transition: transform .3s;
+
+    }
+
+
+
+    .card-livro:hover .livro-capa img {
+
+      transform: scale(1.04);
+
+    }
+
+
+
+    .livro-fallback {
+
+      width: 125px;
+
+      height: 175px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      justify-content: center;
+
+      align-items: center;
+
+      gap: 13px;
+
+      padding: 15px;
+
+      color: white;
+
+      text-align: center;
+
+      font: 700 1.05rem Georgia, serif;
+
+      box-shadow: 5px 7px 10px #0002;
+
+      background: linear-gradient(145deg, #527b87, #244e5b);
+
+    }
+
+
+
+    .livro-fallback span {
+
+      font-size: 2rem;
+
+    }
+
+
+
+    .livro-info {
+
+      padding: 18px;
+
+    }
+
+
+
+    .livro-info h3 {
+
+      font: 700 1.08rem Georgia, serif;
+
+      color: var(--azul-escuro);
+
+      margin-bottom: 5px;
+
+    }
+
+
+
+    .livro-autor {
+
+      font-size: .9rem;
+
+      color: var(--cinza);
+
+      margin-bottom: 14px;
+
+    }
+
+
+
+    .status-livro {
+
+      display: inline-flex;
+
+      align-items: center;
+
+      gap: 6px;
+
+      font-size: .77rem;
+
+      font-weight: 700;
+
+      margin-bottom: 15px;
+
+    }
+
+
+
+    .status-livro::before {
+
+      content: "";
+
+      width: 7px;
+
+      height: 7px;
+
+      border-radius: 50%;
+
+      background: currentColor;
+
+    }
+
+
+
+    .disponivel { color: var(--verde); }
+
+    .emprestado { color: #a16c28; }
+
+
+
+    .livro-acoes {
+
+      display: flex;
+
+      gap: 8px;
+
+      align-items: center;
+
+    }
+
+
+
+    .livro-acoes .botao {
+
+      padding: 9px 12px;
+
+      font-size: .83rem;
+
+      flex: 1;
+
+    }
+
+
+
+    .favorito-botao {
+
+      background: white;
+
+      color: var(--cinza);
+
+      border: 1px solid var(--cinza-claro);
+
+      border-radius: 9px;
+
+      width: 40px;
+
+      height: 40px;
+
+      flex-shrink: 0;
+
+      font-size: 1.2rem;
+
+    }
+
+
+
+    .favorito-botao.marcado {
+
+      color: #c34d65;
+
+      background: #fff0f3;
+
+      border-color: #f3c5ce;
+
+    }
+
+
+
+    /* ========================================
+
+       6. BARRA DE BUSCA E FILTROS
+
+    ======================================== */
+
+    .acervo-cabecalho {
+
+      padding: 48px 0 30px;
+
+      background: linear-gradient(120deg, #dce9ed, #f1f6f7);
+
+    }
+
+
+
+    .acervo-cabecalho p {
+
+      color: var(--cinza);
+
+      margin-top: 10px;
+
+    }
+
+
+
+    .busca-container {
+
+      margin-top: 25px;
+
+      display: flex;
+
+      gap: 12px;
+
+      max-width: 700px;
+
+    }
+
+
+
+    .busca-input {
+
+      min-width: 0;
+
+      flex: 1;
+
+      padding: 14px 17px;
+
+      border: 1px solid #d1dfe3;
+
+      background: white;
+
+      color: var(--texto);
+
+      border-radius: 11px;
+
+    }
+
+
+
+    .filtros-acervo {
+
+      display: flex;
+
+      gap: 10px;
+
+      flex-wrap: wrap;
+
+      margin-bottom: 25px;
+
+    }
+
+
+
+    .filtro-botao {
+
+      background: white;
+
+      border: 1px solid var(--cinza-claro);
+
+      color: var(--cinza);
+
+      border-radius: 25px;
+
+      padding: 8px 16px;
+
+      font-size: .9rem;
+
+    }
+
+
+
+    .filtro-botao.ativo {
+
+      background: var(--azul-petroleo);
+
+      color: white;
+
+      border-color: var(--azul-petroleo);
+
+    }
+
+
+
+    .resultado-contagem {
+
+      color: var(--cinza);
+
+      font-size: .9rem;
+
+      margin-bottom: 20px;
+
+    }
+
+
+
+    .mensagem-vazia {
+
+      padding: 40px 20px;
+
+      background: white;
+
+      border-radius: var(--raio);
+
+      text-align: center;
+
+      color: var(--cinza);
+
+    }
+
+
+
+    /* ========================================
+
+       7. SOBRE NÓS
+
+    ======================================== */
+
+    .sobre-intro {
+
+      display: grid;
+
+      grid-template-columns: 1fr 1fr;
+
+      gap: 45px;
+
+      align-items: center;
+
+    }
+
+
+
+    .sobre-ilustracao {
+
+      min-height: 340px;
+
+      display: grid;
+
+      place-items: center;
+
+      border-radius: 24px;
+
+      background: linear-gradient(140deg, #dce9ed, #b7cdd3);
+
+      font-size: 10rem;
+
+    }
+
+
+
+    .sobre-texto p {
+
+      color: var(--cinza);
+
+      margin: 16px 0;
+
+    }
+
+
+
+    .valores-grade {
+
+      display: grid;
+
+      grid-template-columns: repeat(3, 1fr);
+
+      gap: 20px;
+
+      margin-top: 45px;
+
+    }
+
+
+
+    .valor-card {
+
+      background: white;
+
+      border: 1px solid var(--cinza-claro);
+
+      padding: 27px;
+
+      border-radius: var(--raio);
+
+    }
+
+
+
+    .valor-icone {
+
+      width: 50px;
+
+      height: 50px;
+
+      border-radius: 14px;
+
+      background: var(--azul-claro);
+
+      display: grid;
+
+      place-items: center;
+
+      font-size: 1.5rem;
+
+      margin-bottom: 17px;
+
+    }
+
+
+
+    .valor-card h3 {
+
+      font: 700 1.2rem Georgia, serif;
+
+      margin-bottom: 10px;
+
+      color: var(--azul-escuro);
+
+    }
+
+
+
+    .valor-card p {
+
+      font-size: .92rem;
+
+      color: var(--cinza);
+
+    }
+
+
+
+    .contato-grade {
+
+      display: grid;
+
+      grid-template-columns: 1fr 1fr;
+
+      gap: 22px;
+
+      margin-top: 35px;
+
+    }
+
+
+
+    .contato-card {
+
+      background: white;
+
+      padding: 28px;
+
+      border-radius: var(--raio);
+
+      border: 1px solid var(--cinza-claro);
+
+    }
+
+
+
+    .contato-card p {
+
+      color: var(--cinza);
+
+      margin-top: 10px;
+
+    }
+
+
+
+    /* ========================================
+
+       8. PERFIL DO LEITOR
+
+    ======================================== */
+
+    .perfil-cabecalho {
+
+      padding: 48px 0;
+
+      background: linear-gradient(120deg, #dce9ed, #f1f6f7);
+
+    }
+
+
+
+    .perfil-identidade {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 22px;
+
+    }
+
+
+
+    .avatar {
+
+      width: 90px;
+
+      height: 90px;
+
+      flex-shrink: 0;
+
+      border-radius: 50%;
+
+      background: var(--azul-petroleo);
+
+      color: white;
+
+      display: grid;
+
+      place-items: center;
+
+      font-size: 2rem;
+
+      border: 5px solid white;
+
+      box-shadow: var(--sombra);
+
+    }
+
+
+
+    .perfil-identidade h1 {
+
+      font: 700 2rem Georgia, serif;
+
+      color: var(--azul-escuro);
+
+    }
+
+
+
+    .perfil-identidade p {
+
+      color: var(--cinza);
+
+    }
+
+
+
+    .perfil-resumo {
+
+      display: grid;
+
+      grid-template-columns: repeat(3, 1fr);
+
+      gap: 18px;
+
+      margin-top: 30px;
+
+    }
+
+
+
+    .estatistica-card {
+
+      padding: 22px;
+
+      background: white;
+
+      border: 1px solid var(--cinza-claro);
+
+      border-radius: var(--raio);
+
+    }
+
+
+
+    .estatistica-card span {
+
+      color: var(--cinza);
+
+      font-size: .9rem;
+
+    }
+
+
+
+    .estatistica-card strong {
+
+      display: block;
+
+      color: var(--azul-petroleo);
+
+      font-size: 2rem;
+
+      margin-top: 6px;
+
+    }
+
+
+
+    .perfil-bloco {
+
+      margin-top: 38px;
+
+    }
+
+
+
+    .perfil-bloco h2 {
+
+      font: 700 1.6rem Georgia, serif;
+
+      margin-bottom: 20px;
+
+      color: var(--azul-escuro);
+
+    }
+
+
+
+    .emprestimo-item {
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: space-between;
+
+      gap: 18px;
+
+      background: white;
+
+      padding: 20px;
+
+      border-radius: 14px;
+
+      border: 1px solid var(--cinza-claro);
+
+      margin-bottom: 12px;
+
+    }
+
+
+
+    .emprestimo-item p {
+
+      color: var(--cinza);
+
+      font-size: .9rem;
+
+    }
+
+
+
+    .perfil-vazio {
+
+      padding: 25px;
+
+      background: white;
+
+      border-radius: 14px;
+
+      color: var(--cinza);
+
+      border: 1px solid var(--cinza-claro);
+
+    }
+
+
+
+    /* ========================================
+
+       9. RODAPÉ
+
+    ======================================== */
+
+    .rodape {
+
+      background: var(--azul-escuro);
+
+      color: white;
+
+      margin-top: 30px;
+
+      padding: 40px 0 20px;
+
+    }
+
+
+
+    .rodape-superior {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: start;
+
+      gap: 25px;
+
+      padding-bottom: 28px;
+
+    }
+
+
+
+    .rodape .logo {
+
+      color: white;
+
+    }
+
+
+
+    .rodape .logo-icone {
+
+      background: rgba(255,255,255,.13);
+
+    }
+
+
+
+    .rodape p {
+
+      color: #c3d1d5;
+
+      font-size: .9rem;
+
+      max-width: 390px;
+
+      margin-top: 12px;
+
+    }
+
+
+
+    .rodape-links {
+
+      display: flex;
+
+      gap: 10px;
+
+      flex-wrap: wrap;
+
+    }
+
+
+
+    .rodape-links button {
+
+      border: none;
+
+      background: transparent;
+
+      color: #e2ebee;
+
+      padding: 8px;
+
+    }
+
+
+
+    .rodape-links button:hover {
+
+      text-decoration: underline;
+
+    }
+
+
+
+    .rodape-final {
+
+      border-top: 1px solid #ffffff24;
+
+      padding-top: 18px;
+
+      text-align: center;
+
+      color: #c3d1d5;
+
+      font-size: .8rem;
+
+    }
+
+
+
+    /* ========================================
+
+       10. NOTIFICAÇÕES E MODAL
+
+    ======================================== */
+
+    .notificacao {
+
+      position: fixed;
+
+      bottom: 22px;
+
+      right: 22px;
+
+      z-index: 2000;
+
+      width: min(370px, calc(100% - 44px));
+
+      padding: 16px 20px;
+
+      background: var(--azul-escuro);
+
+      color: white;
+
+      border-radius: 12px;
+
+      box-shadow: var(--sombra);
+
+      opacity: 0;
+
+      transform: translateY(15px);
+
+      pointer-events: none;
+
+      transition: opacity .25s, transform .25s;
+
+    }
+
+
+
+    .notificacao.visivel {
+
+      opacity: 1;
+
+      transform: translateY(0);
+
+    }
+
+
+
+    .modal-fundo {
+
+      position: fixed;
+
+      inset: 0;
+
+      z-index: 3000;
+
+      padding: 20px;
+
+      background: rgba(16, 36, 42, .65);
+
+      display: none;
+
+      place-items: center;
+
+    }
+
+
+
+    .modal-fundo.aberto {
+
+      display: grid;
+
+    }
+
+
+
+    .modal-conteudo {
+
+      width: min(480px, 100%);
+
+      background: white;
+
+      border-radius: 20px;
+
+      padding: 30px;
+
+      box-shadow: var(--sombra);
+
+      animation: entrada .25s ease;
+
+    }
+
+
+
+    .modal-topo {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      gap: 15px;
+
+      align-items: start;
+
+      margin-bottom: 15px;
+
+    }
+
+
+
+    .modal-topo h2 {
+
+      font: 700 1.6rem Georgia, serif;
+
+      color: var(--azul-escuro);
+
+    }
+
+
+
+    .modal-fechar {
+
+      border: none;
+
+      background: var(--azul-gelo);
+
+      color: var(--azul-petroleo);
+
+      border-radius: 8px;
+
+      padding: 5px 11px;
+
+      font-size: 1.3rem;
+
+    }
+
+
+
+    .modal-conteudo p {
+
+      color: var(--cinza);
+
+      margin-bottom: 15px;
+
+    }
+
+
+
+    .modal-acoes {
+
+      display: flex;
+
+      gap: 10px;
+
+      flex-wrap: wrap;
+
+      margin-top: 22px;
+
+    }
+
+
+
+    /* ========================================
+
+       11. RESPONSIVIDADE
+
+    ======================================== */
+
+    @media (max-width: 950px) {
+
+      .navbar-interno {
+
+        flex-wrap: wrap;
+
+        padding: 14px 0;
+
+      }
+
+
+
+      .grade-livros {
+
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+
+      }
+
+
+
+      .slide {
+
+        padding: 40px 55px;
+
+      }
+
+
+
+      .slide-ilustracao {
+
+        font-size: 8rem;
+
+      }
+
+    }
+
+
+
+    @media (max-width: 700px) {
+
+      .navbar-interno {
+
+        min-height: 72px;
+
+      }
+
+
+
+      .menu-mobile {
+
+        display: block;
+
+      }
+
+
+
+      .navbar-abas {
+
+        display: none;
+
+        width: 100%;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        padding-bottom: 5px;
+
+      }
+
+
+
+      .navbar-abas.aberto {
+
+        display: flex;
+
+      }
+
+
+
+      .aba-botao {
+
+        text-align: left;
+
+        padding: 12px 15px;
+
+      }
+
+
+
+      .carrossel-container {
+
+        margin-top: 18px;
+
+        border-radius: 18px;
+
+      }
+
+
+
+      .carrossel-slides {
+
+        min-height: 510px;
+
+      }
+
+
+
+      .slide {
+
+        grid-template-columns: 1fr;
+
+        grid-template-rows: 1fr auto;
+
+        gap: 5px;
+
+        padding: 35px 38px 55px;
+
+        text-align: center;
+
+      }
+
+
+
+      .slide-texto {
+
+        margin: auto;
+
+      }
+
+
+
+      .slide-ilustracao {
+
+        min-height: 115px;
+
+        font-size: 5rem;
+
+      }
+
+
+
+      .carrossel-anterior { left: 7px; }
+
+      .carrossel-proximo { right: 7px; }
+
+
+
+      .boas-vindas-topo {
+
+        align-items: start;
+
+        flex-direction: column;
+
+      }
+
+
+
+      .grade-livros {
+
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: 14px;
+
+      }
+
+
+
+      .livro-capa {
+
+        height: 175px;
+
+        padding: 12px;
+
+      }
+
+
+
+      .livro-fallback {
+
+        width: 100px;
+
+        height: 140px;
+
+        font-size: .9rem;
+
+      }
+
+
+
+      .livro-info {
+
+        padding: 13px;
+
+      }
+
+
+
+      .livro-info h3 {
+
+        font-size: .98rem;
+
+      }
+
+
+
+      .livro-acoes {
+
+        flex-wrap: wrap;
+
+      }
+
+
+
+      .livro-acoes .botao {
+
+        padding: 8px;
+
+      }
+
+
+
+      .sobre-intro {
+
+        grid-template-columns: 1fr;
+
+        gap: 25px;
+
+      }
+
+
+
+      .sobre-ilustracao {
+
+        min-height: 230px;
+
+        font-size: 7rem;
+
+      }
+
+
+
+      .valores-grade {
+
+        grid-template-columns: 1fr;
+
+      }
+
+
+
+      .contato-grade {
+
+        grid-template-columns: 1fr;
+
+      }
+
+
+
+      .perfil-resumo {
+
+        grid-template-columns: 1fr;
+
+      }
+
+
+
+      .perfil-identidade h1 {
+
+        font-size: 1.5rem;
+
+      }
+
+
+
+      .avatar {
+
+        width: 70px;
+
+        height: 70px;
+
+      }
+
+
+
+      .emprestimo-item {
+
+        align-items: start;
+
+        flex-direction: column;
+
+      }
+
+
+
+      .rodape-superior {
+
+        flex-direction: column;
+
+      }
+
+
+
+      .busca-container {
+
+        flex-direction: column;
+
+      }
+
+
+
+      .secao {
+
+        padding: 45px 0;
+
+      }
+
+    }
+
+
+
+    @media (max-width: 370px) {
+
+      .grade-livros {
+
+        grid-template-columns: 1fr;
+
+      }
+
+
+
+      .livro-capa {
+
+        height: 220px;
+
+      }
+
+
+
+      .livro-fallback {
+
+        width: 125px;
+
+        height: 175px;
+
+      }
+
+
+
+      .logo-nome {
+
+        font-size: 1.2rem;
+
+      }
+
+    }
+
+#mensagem {
+    margin-top: 20px;
+    text-align: center;
+    font-weight: 600;
+}
+
+#mensagem.sucesso {
+    color: #377d63;
+}
+
+#mensagem.erro {
+    color: #a94442;
+}
+
+  

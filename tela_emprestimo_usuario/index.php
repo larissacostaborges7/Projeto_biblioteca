@@ -1,4 +1,3 @@
-
 <?php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -97,7 +96,7 @@ function classeStatus($item): string {
 <body>
 
 <aside class="menu-lateral">
-    <a href="../painel/usuario.php" class="logo">
+    <a href="../tela_cadastro/index.php" class="logo">
         <span class="logo-icone">📚</span>
         <span class="logo-texto">
             <span class="logo-nome">Biblioteca Municipal</span>
@@ -106,34 +105,32 @@ function classeStatus($item): string {
     </a>
 
     <span class="menu-titulo">Área do leitor</span>
-
     
-<nav>
-    <a href="../painel/usuario.php">
-        <span>⌂</span> Início
-    </a>
+    <nav>
+        <a href="../tela_principal2/index.html">
+            <span>⌂</span> Início
+        </a>
 
-    <a href="index.php" class="ativo">
-        <span>▤</span> Meus empréstimos
-    </a>
+        <a href="index.php" class="ativo">
+            <span>▤</span> Meus empréstimos
+        </a>
 
-    <a href="reservas.php">
-        <span>▣</span> Minhas reservas
-    </a>
+        <a href="reservas.php">
+            <span>▣</span> Minhas reservas
+        </a>
 
-    <a href="historico.php">
-        <span>◷</span> Histórico
-    </a>
+        <a href="historico.php">
+            <span>◷</span> Histórico
+        </a>
 
-    <a href="../livros/listar.php">
-        <span>📚</span> Consultar acervo
-    </a>
-</nav>
+        <a href="../livros/listar.php">
+            <span>📚</span> Consultar acervo
+        </a>
+    </nav>
 
-    <a href="../tela_cadastro/sair_usuario.php"
-   class="botao botao-login">
-    Sair da conta
-</a>
+    <a href="../tela_cadastro/sair_usuario.php" class="botao botao-login">
+        Sair da conta
+    </a>
 </aside>
 
 <main class="conteudo-principal">
@@ -156,7 +153,8 @@ function classeStatus($item): string {
         <section class="alerta-caixa">
             <h2>Entre na sua conta</h2>
             <p>Faça login como leitor para consultar seus empréstimos.</p>
-            <a href="../login/usuario.php" class="botao">Entrar na conta</a>
+            <!-- Link corrigido para a tela de cadastro/login -->
+            <a href="../tela_cadastro/index.php" class="botao">Entrar na conta</a>
         </section>
 
     <?php elseif ($erro !== ''): ?>

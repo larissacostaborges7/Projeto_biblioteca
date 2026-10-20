@@ -352,24 +352,44 @@ document.addEventListener("DOMContentLoaded", () => {
                 method: "POST",
                 body: formData
             })
-            .then(res => res.json())
-            .then(dados => {
-                if (dados.sucesso) {
-                    mostrarMensagem(mensagemCadastro, dados.mensagem, "sucesso");
-                    formCadastro.reset();
-                    if (secaoResponsavel) secaoResponsavel.hidden = true;
-                    if (campoCargo) campoCargo.hidden = true;
+           
+.then(res => res.json())
+.then(dados => {
+    if (dados.sucesso) {
+        mostrarMensagem(
+            mensagemCadastro,
+            dados.mensagem,
+            "sucesso"
+        );
 
-                    setTimeout(() => {
-                        cartao.classList.remove("is-flipped");
-                    }, 2200);
-                } else {
-                    mostrarMensagem(mensagemCadastro, dados.mensagem, "erro");
-                }
-            })
-            .catch(() => {
-                mostrarMensagem(mensagemCadastro, "Erro ao processar o cadastro.", "erro");
-            });
-        });
+        formCadastro.reset();
+
+        if (secaoResponsavel) {
+            secaoResponsavel.hidden = true;
+        }
+
+        if (campoCargo) {
+            campoCargo.hidden = true;
+        }
+
+        setTimeout(() => {
+            cartao.classList.remove("is-flipped");
+        }, 2200);
+
+    } else {
+        mostrarMensagem(
+            mensagemCadastro,
+            dados.mensagem,
+            "erro"
+        );
     }
+})
+.catch(() => {
+    mostrarMensagem(
+        mensagemCadastro,
+        "Erro ao processar o cadastro.",
+        "erro"
+    );
 });
+        })
+    }})

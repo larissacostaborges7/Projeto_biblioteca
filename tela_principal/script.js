@@ -794,3 +794,7 @@ mostrarSlide(0);
 iniciarCarrossel();
 atualizarTudo();
 carregarLivrosDoBanco();
+
+if (dados.sucesso) {
+    window.location.href = "../tela_principal/index.php";
+}
