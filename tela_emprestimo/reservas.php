@@ -1,228 +1,755 @@
+
 <?php
-session_start();
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
 
 require_once __DIR__ . '/../includes/conexao.php';
-require_once __DIR__ . '/../includes/proteger_acesso.php'; // Protege para garantir que é um leitor logado
+require_once __DIR__ . '/../includes/proteger_acesso.php';
 require_once __DIR__ . '/../includes/registrar_log.php';
 
-// Exige que o usuário logado seja um Leitor (ajuste o cargo conforme sua regra de permissão)
-exigirCargo(['Leitor', 'Usuario']); 
+exigirCargo(['Administrador', 'Atendente']);
 
-$idUsuarioLogado = (int) ($_SESSION['id_usuario'] ?? 0);
 $erro = '';
 $sucesso = '';
 
-// Processamento de Ações de Reserva via POST
+function h($valor): string
+{
+    return htmlspecialchars(
+        (string) ($valor ?? ''),
+        ENT_QUOTES,
+        'UTF-8'
+    );
+}
+
+function voltarParaReservas(): void
+{
+    header('Location: reservas.php');
+    exit;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Registrar empréstimo a partir de uma reserva
+|--------------------------------------------------------------------------
+*/
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $acao = $_POST['acao'] ?? '';
 
-    // 1. Cadastrar Nova Reserva (Usando direto o ID da sessão do leitor)
-    if ($acao === 'cadastrar_reserva') {
-        $idLivro = filter_input(INPUT_POST, 'id_livro', FILTER_VALIDATE_INT);
-        $dataReserva = date('Y-m-d');
+    if ($acao === 'registrar_emprestimo') {
+        $idReserva = filter_input(
+            INPUT_POST,
+            'id_reserva',
+            FILTER_VALIDATE_INT
+        );
 
-        if (!$idUsuarioLogado || !$idLivro) {
-            $erro = 'Selecione um livro válido para realizar a reserva.';
-        } else {
-            try {
-                // Verifica se o leitor já tem reserva ativa para este livro
-                $stmtVerif = $conexao->prepare("SELECT id_reserva FROM reservas WHERE id_usuario = ? AND id_livro = ? AND status = 'ativa'");
-                $stmtVerif->execute([$idUsuarioLogado, $idLivro]);
-                if ($stmtVerif->fetch()) {
-                    throw new RuntimeException('Você já possui uma reserva ativa para este livro.');
-                }
-
-                $stmt = $conexao->prepare("INSERT INTO reservas (id_usuario, id_livro, data_reserva, status) VALUES (?, ?, ?, 'ativa')");
-                $stmt->execute([$idUsuarioLogado, $idLivro]);
-                $idReserva = (int) $conexao->lastInsertId();
-
-                registrarLog($conexao, 'RESERVA_LEITOR', 'reservas', $idReserva, 'Leitor realizou reserva de livro.');
-                $sucesso = 'Livro reservado com sucesso!';
-            } catch (Throwable $e) {
-                $erro = $e->getMessage();
+        try {
+            if (!$idReserva || $idReserva < 1) {
+                throw new RuntimeException('Reserva inválida.');
             }
+
+            $idFuncionario = (int) ($_SESSION['id_funcionario'] ?? 0);
+
+            if ($idFuncionario < 1) {
+                throw new RuntimeException(
+                    'Não foi possível identificar o funcionário logado.'
+                );
+            }
+
+            $conexao->beginTransaction();
+
+            /*
+             * Bloqueia a reserva enquanto ela está sendo processada,
+             * evitando que duas pessoas a atendam ao mesmo tempo.
+             */
+            $stmtReserva = $conexao->prepare("
+                SELECT
+                    r.id_reserva,
+                    r.id_usuario,
+                    r.id_livro,
+                    r.status,
+                    u.nome AS nome_usuario,
+                    l.titulo
+                FROM reservas r
+                INNER JOIN usuarios u
+                    ON u.id_usuario = r.id_usuario
+                INNER JOIN livros l
+                    ON l.id_livro = r.id_livro
+                WHERE r.id_reserva = ?
+                FOR UPDATE
+            ");
+
+            $stmtReserva->execute([$idReserva]);
+            $reserva = $stmtReserva->fetch(PDO::FETCH_ASSOC);
+
+            if (!$reserva) {
+                throw new RuntimeException('Reserva não encontrada.');
+            }
+
+            if ($reserva['status'] !== 'ativa') {
+                throw new RuntimeException(
+                    'Esta reserva não está mais ativa.'
+                );
+            }
+
+            /*
+             * Procura um exemplar disponível do livro reservado.
+             * Confirme a estrutura e os valores da tabela exemplares.
+             */
+            $stmtExemplar = $conexao->prepare("
+                SELECT e.id_exemplar
+                FROM exemplares e
+                WHERE e.id_livro = ?
+                  AND e.status = 'disponivel'
+                  AND NOT EXISTS (
+                      SELECT 1
+                      FROM emprestimos em
+                      WHERE em.id_exemplar = e.id_exemplar
+                        AND em.status = 'ativo'
+                  )
+                ORDER BY e.id_exemplar
+                LIMIT 1
+                FOR UPDATE
+            ");
+
+            $stmtExemplar->execute([(int) $reserva['id_livro']]);
+            $exemplar = $stmtExemplar->fetch(PDO::FETCH_ASSOC);
+
+            if (!$exemplar) {
+                throw new RuntimeException(
+                    'Não há exemplar disponível para este livro.'
+                );
+            }
+
+            /*
+             * O prazo padrão fica em 14 dias.
+             * Altere este valor se a biblioteca utilizar outro prazo.
+             */
+            $dataEmprestimo = date('Y-m-d');
+            $dataPrevista = date(
+                'Y-m-d',
+                strtotime('+14 days')
+            );
+
+            $stmtEmprestimo = $conexao->prepare("
+                INSERT INTO emprestimos (
+                    id_usuario,
+                    id_exemplar,
+                    id_funcionario,
+                    data_emprestimo,
+                    data_prevista_devolucao,
+                    status
+                ) VALUES (?, ?, ?, ?, ?, 'ativo')
+            ");
+
+            $stmtAtualizarExemplar = $conexao->prepare("
+    UPDATE exemplares
+    SET status = 'emprestado'
+    WHERE id_exemplar = ?
+      AND status = 'disponivel'
+");
+
+$stmtAtualizarExemplar->execute([
+    (int) $exemplar['id_exemplar']
+]);
+
+if ($stmtAtualizarExemplar->rowCount() !== 1) {
+    throw new RuntimeException(
+        'Não foi possível atualizar o status do exemplar.'
+    );
+}
+
+            /*
+             * Só finaliza a reserva depois de inserir o empréstimo.
+             */
+            $stmtAtualizarReserva = $conexao->prepare("
+                UPDATE reservas
+                SET status = 'atendida'
+                WHERE id_reserva = ?
+                  AND status = 'ativa'
+            ");
+
+            $stmtAtualizarReserva->execute([$idReserva]);
+
+            if ($stmtAtualizarReserva->rowCount() !== 1) {
+                throw new RuntimeException(
+                    'Não foi possível finalizar a reserva.'
+                );
+            }
+
+            $idEmprestimo = (int) $conexao->lastInsertId();
+
+            registrarLog(
+                $conexao,
+                'EMPRESTIMO_POR_RESERVA',
+                'emprestimos',
+                $idEmprestimo,
+                'Empréstimo registrado a partir da reserva '
+                    . $idReserva
+                    . '. Exemplar: '
+                    . (int) $exemplar['id_exemplar']
+            );
+
+            $conexao->commit();
+
+            $sucesso =
+                'Empréstimo registrado para '
+                . $reserva['nome_usuario']
+                . '. A reserva foi marcada como atendida.';
+
+        } catch (Throwable $e) {
+            if ($conexao->inTransaction()) {
+                $conexao->rollBack();
+            }
+
+            $erro = $e instanceof RuntimeException
+                ? $e->getMessage()
+                : 'Não foi possível registrar o empréstimo. '
+                    . 'Confira a estrutura das tabelas do banco.';
         }
     }
 
-    // 2. Cancelar a própria Reserva
     if ($acao === 'cancelar_reserva') {
-        $idReserva = filter_input(INPUT_POST, 'id_reserva', FILTER_VALIDATE_INT);
-        if ($idReserva) {
-            try {
-                // Garante que o leitor só cancela a reserva que pertence a ele mesmo
-                $stmt = $conexao->prepare("UPDATE reservas SET status = 'cancelada' WHERE id_reserva = ? AND id_usuario = ? AND status = 'ativa'");
-                $stmt->execute([$idReserva, $idUsuarioLogado]);
+        $idReserva = filter_input(
+            INPUT_POST,
+            'id_reserva',
+            FILTER_VALIDATE_INT
+        );
 
-                if ($stmt->rowCount() > 0) {
-                    registrarLog($conexao, 'CANCELAR_RESERVA_LEITOR', 'reservas', $idReserva, 'Leitor cancelou sua reserva.');
-                    $sucesso = 'Reserva cancelada com sucesso!';
-                } else {
-                    throw new RuntimeException('Não foi possível cancelar esta reserva.');
-                }
-            } catch (Throwable $e) {
-                $erro = $e->getMessage();
+        try {
+            if (!$idReserva || $idReserva < 1) {
+                throw new RuntimeException('Reserva inválida.');
             }
+
+            $stmt = $conexao->prepare("
+                UPDATE reservas
+                SET status = 'cancelada'
+                WHERE id_reserva = ?
+                  AND status = 'ativa'
+            ");
+
+            $stmt->execute([$idReserva]);
+
+            if ($stmt->rowCount() !== 1) {
+                throw new RuntimeException(
+                    'A reserva não existe ou não está mais ativa.'
+                );
+            }
+
+            registrarLog(
+                $conexao,
+                'CANCELAR_RESERVA_FUNCIONARIO',
+                'reservas',
+                $idReserva,
+                'Funcionário cancelou a reserva.'
+            );
+
+            $sucesso = 'Reserva cancelada com sucesso.';
+
+        } catch (Throwable $e) {
+            $erro = $e instanceof RuntimeException
+                ? $e->getMessage()
+                : 'Não foi possível cancelar a reserva.';
         }
     }
 }
 
-// Carrega apenas as reservas do leitor logado
-$stmtReservas = $conexao->prepare("
-    SELECT r.*, l.titulo, l.autor 
+/*
+|--------------------------------------------------------------------------
+| Consultar todas as reservas
+|--------------------------------------------------------------------------
+*/
+$stmtReservas = $conexao->query("
+    SELECT
+        r.id_reserva,
+        r.data_reserva,
+        r.data_validade,
+        r.status,
+        u.id_usuario,
+        u.nome AS nome_usuario,
+        l.id_livro,
+        l.titulo,
+        l.autor
     FROM reservas r
-    INNER JOIN livros l ON l.id_livro = r.id_livro
-    WHERE r.id_usuario = ?
-    ORDER BY r.status DESC, r.data_reserva ASC
+    INNER JOIN usuarios u
+        ON u.id_usuario = r.id_usuario
+    INNER JOIN livros l
+        ON l.id_livro = r.id_livro
+    ORDER BY
+        CASE r.status
+            WHEN 'ativa' THEN 1
+            WHEN 'atendida' THEN 2
+            WHEN 'expirada' THEN 3
+            WHEN 'cancelada' THEN 4
+            ELSE 5
+        END,
+        r.data_reserva ASC
 ");
-$stmtReservas->execute([$idUsuarioLogado]);
+
 $reservas = $stmtReservas->fetchAll(PDO::FETCH_ASSOC);
 
-// Carrega lista de livros disponíveis para a busca dinâmica
-$livros = $conexao->query('SELECT id_livro, titulo, autor, isbn, ano_publicacao FROM livros ORDER BY titulo')->fetchAll(PDO::FETCH_ASSOC);
+$totalAtivas = 0;
+$totalAtendidas = 0;
+$totalOutras = 0;
+
+foreach ($reservas as $reserva) {
+    if ($reserva['status'] === 'ativa') {
+        $totalAtivas++;
+    } elseif ($reserva['status'] === 'atendida') {
+        $totalAtendidas++;
+    } else {
+        $totalOutras++;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minhas Reservas - Biblioteca Municipal</title>
-    <link rel="stylesheet" href="style.css">
+
+    <title>Gerenciar Reservas - Biblioteca Municipal</title>
+
+    <link rel="stylesheet" href="style_reservas.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f1f5f9;
+            color: #1e293b;
+            font-family: Arial, sans-serif;
+        }
+
+        main {
+            width: min(1200px, 96%);
+            margin: 32px auto;
+        }
+
+        .cabecalho {
+            margin-bottom: 24px;
+        }
+
+        .cabecalho h1 {
+            margin-bottom: 8px;
+        }
+
+        .cabecalho p {
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .resumo {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .cartao,
+        .painel {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, .06);
+        }
+
+        .numero {
+            display: block;
+            margin-top: 8px;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .filtros {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        input,
+        select {
+            min-height: 40px;
+            padding: 9px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .filtros input {
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .tabela {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+        }
+
+        th,
+        td {
+            padding: 13px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background: #f8fafc;
+            white-space: nowrap;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .status-ativa {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-atendida {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .status-cancelada,
+        .status-expirada {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .btn {
+            display: inline-block;
+            border: 0;
+            border-radius: 6px;
+            padding: 9px 12px;
+            margin: 2px 0;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .btn-emprestimo {
+            background: #2563eb;
+            color: #fff;
+        }
+
+        .btn-cancelar {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .alerta {
+            margin-bottom: 18px;
+            padding: 14px;
+            border-radius: 8px;
+            line-height: 1.5;
+        }
+
+        .alerta-erro {
+            color: #991b1b;
+            background: #fee2e2;
+        }
+
+        .alerta-sucesso {
+            color: #166534;
+            background: #dcfce7;
+        }
+
+        .vazio {
+            padding: 24px;
+            text-align: center;
+            color: #64748b;
+        }
+
+        @media (max-width: 700px) {
+            .resumo {
+                grid-template-columns: 1fr;
+            }
+
+            main {
+                width: 94%;
+                margin: 20px auto;
+            }
+        }
+    </style>
 </head>
+
 <body>
+<main>
+    <header class="cabecalho">
+        <h1>Gerenciamento de Reservas</h1>
 
-    <main style="max-width: 900px; margin: 2rem auto; padding: 0 1rem;">
-        <header style="margin-bottom: 2rem;">
-            <h1>Minhas Reservas de Livros</h1>
-            <div class="user-info">
-                Olá, <strong><?= htmlspecialchars($_SESSION['nome_usuario'] ?? 'Leitor', ENT_QUOTES, 'UTF-8') ?></strong>
+        <p>
+            Consulte as reservas dos leitores e registre o empréstimo
+            quando o leitor vier retirar o livro na biblioteca.
+        </p>
+
+        <p>
+            Funcionário:
+            <strong><?= h($_SESSION['nome_funcionario'] ?? 'Funcionário') ?></strong>
+        </p>
+    </header>
+
+    <?php if ($erro !== ''): ?>
+        <div class="alerta alerta-erro" role="alert">
+            <?= h($erro) ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($sucesso !== ''): ?>
+        <div class="alerta alerta-sucesso" role="status">
+            <?= h($sucesso) ?>
+        </div>
+    <?php endif; ?>
+
+    <section class="resumo">
+        <div class="cartao">
+            Reservas aguardando atendimento
+            <span class="numero"><?= $totalAtivas ?></span>
+        </div>
+
+        <div class="cartao">
+            Reservas atendidas
+            <span class="numero"><?= $totalAtendidas ?></span>
+        </div>
+
+        <div class="cartao">
+            Canceladas ou expiradas
+            <span class="numero"><?= $totalOutras ?></span>
+        </div>
+    </section>
+
+    <section class="painel">
+        <h2>Reservas dos leitores</h2>
+
+        <div class="filtros">
+            <input
+                type="search"
+                id="busca"
+                placeholder="Pesquisar leitor, livro ou código da reserva..."
+                autocomplete="off"
+            >
+
+            <select id="filtroStatus">
+                <option value="">Todos os status</option>
+                <option value="ativa">Ativas</option>
+                <option value="atendida">Atendidas</option>
+                <option value="cancelada">Canceladas</option>
+                <option value="expirada">Expiradas</option>
+            </select>
+        </div>
+
+        <?php if (empty($reservas)): ?>
+            <div class="vazio">
+                Nenhuma reserva foi registrada até o momento.
             </div>
-        </header>
+        <?php else: ?>
+            <div class="tabela">
+                <table id="tabelaReservas">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Leitor</th>
+                            <th>Livro</th>
+                            <th>Data da reserva</th>
+                            <th>Validade</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
 
-        <?php if ($erro !== ''): ?>
-            <div class="alert alert-error" style="background:#fee2e2; color:#b91c1c; padding:1rem; border-radius:6px; margin-bottom:1rem;"><?= htmlspecialchars($erro, ENT_QUOTES, 'UTF-8') ?></div>
+                    <tbody>
+                    <?php foreach ($reservas as $item): ?>
+                        <?php
+                            $status = $item['status'];
+                            $statusClasse = in_array(
+                                $status,
+                                ['ativa', 'atendida', 'cancelada', 'expirada'],
+                                true
+                            ) ? $status : 'expirada';
+                        ?>
+
+                        <tr
+                            data-status="<?= h($status) ?>"
+                            data-pesquisa="<?= h(
+                                $item['id_reserva'] . ' ' .
+                                $item['nome_usuario'] . ' ' .
+                                $item['id_usuario'] . ' ' .
+                                $item['titulo'] . ' ' .
+                                ($item['autor'] ?? '')
+                            ) ?>"
+                        >
+                            <td>#<?= (int) $item['id_reserva'] ?></td>
+
+                            <td>
+                                <strong><?= h($item['nome_usuario']) ?></strong>
+                                <br>
+                                <small>
+                                    Código do leitor:
+                                    <?= (int) $item['id_usuario'] ?>
+                                </small>
+                            </td>
+
+                            <td>
+                                <strong><?= h($item['titulo']) ?></strong>
+                                <br>
+                                <small><?= h($item['autor'] ?? '') ?></small>
+                            </td>
+
+                            <td>
+                                <?= h(date(
+                                    'd/m/Y',
+                                    strtotime($item['data_reserva'])
+                                )) ?>
+                            </td>
+
+                            <td>
+                                <?php if (!empty($item['data_validade'])): ?>
+                                    <?= h(date(
+                                        'd/m/Y',
+                                        strtotime($item['data_validade'])
+                                    )) ?>
+                                <?php else: ?>
+                                    Não definida
+                                <?php endif; ?>
+                            </td>
+
+                            <td>
+                                <span class="status status-<?= h($statusClasse) ?>">
+                                    <?= h(ucfirst($status)) ?>
+                                </span>
+                            </td>
+
+                            <td>
+                                <?php if ($status === 'ativa'): ?>
+                                    <form
+                                        method="post"
+                                        onsubmit="return confirm(
+                                            'Confirmar o registro do empréstimo deste livro?'
+                                        );"
+                                    >
+                                        <input
+                                            type="hidden"
+                                            name="acao"
+                                            value="registrar_emprestimo"
+                                        >
+
+                                        <input
+                                            type="hidden"
+                                            name="id_reserva"
+                                            value="<?= (int) $item['id_reserva'] ?>"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-emprestimo"
+                                        >
+                                            Registrar empréstimo
+                                        </button>
+                                    </form>
+
+                                    <form
+                                        method="post"
+                                        onsubmit="return confirm(
+                                            'Tem certeza de que deseja cancelar esta reserva?'
+                                        );"
+                                    >
+                                        <input
+                                            type="hidden"
+                                            name="acao"
+                                            value="cancelar_reserva"
+                                        >
+
+                                        <input
+                                            type="hidden"
+                                            name="id_reserva"
+                                            value="<?= (int) $item['id_reserva'] ?>"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-cancelar"
+                                        >
+                                            Cancelar reserva
+                                        </button>
+                                    </form>
+                                <?php elseif ($status === 'atendida'): ?>
+                                    Empréstimo já registrado
+                                <?php else: ?>
+                                    —
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+
+            <p id="semResultados" class="vazio" hidden>
+                Nenhuma reserva corresponde à pesquisa.
+            </p>
         <?php endif; ?>
+    </section>
+</main>
 
-        <?php if ($sucesso !== ''): ?>
-            <div class="alert alert-success" style="background:#dcfce7; color:#15803d; padding:1rem; border-radius:6px; margin-bottom:1rem;"><?= htmlspecialchars($sucesso, ENT_QUOTES, 'UTF-8') ?></div>
-        <?php endif; ?>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const busca = document.getElementById('busca');
+    const filtroStatus = document.getElementById('filtroStatus');
+    const linhas = Array.from(
+        document.querySelectorAll('#tabelaReservas tbody tr')
+    );
+    const semResultados = document.getElementById('semResultados');
 
-        <!-- Formulário de Nova Reserva (Sem pedir dados do usuário) -->
-        <div class="card-container" style="background:#fff; padding:1.5rem; border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-            <h2 class="card-title" style="margin-bottom: 1rem;">Reservar Novo Livro</h2>
-            <form method="POST">
-                <input type="hidden" name="acao" value="cadastrar_reserva">
-                
-                <div class="form-group" style="margin-bottom: 1rem;">
-                    <label for="busca_livro" style="display:block; margin-bottom:0.5rem; font-weight:600;">Pesquisar Livro (Título, Autor, ISBN ou Código):</label>
-                    <input type="text" id="busca_livro" placeholder="Digite para buscar o livro dinamicamente..." autocomplete="off" style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.9rem; margin-bottom: 0.5rem;">
-                    
-                    <select name="id_livro" id="id_livro" required style="width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #fff;">
-                        <option value="">Selecione um livro da lista</option>
-                        <?php foreach ($livros as $l): ?>
-                            <option value="<?= (int) $l['id_livro'] ?>" 
-                                    data-titulo="<?= strtolower(htmlspecialchars($l['titulo'], ENT_QUOTES, 'UTF-8')) ?>"
-                                    data-autor="<?= strtolower(htmlspecialchars($l['autor'] ?? '', ENT_QUOTES, 'UTF-8')) ?>"
-                                    data-isbn="<?= strtolower(htmlspecialchars($l['isbn'] ?? '', ENT_QUOTES, 'UTF-8')) ?>"
-                                    data-ano="<?= strtolower(htmlspecialchars($l['ano_publicacao'] ?? '', ENT_QUOTES, 'UTF-8')) ?>"
-                                    data-id="<?= (int) $l['id_livro'] ?>">
-                                <?= htmlspecialchars($l['titulo'], ENT_QUOTES, 'UTF-8') ?> <?= !empty($l['autor']) ? '— ' . htmlspecialchars($l['autor'], ENT_QUOTES, 'UTF-8') : '' ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
+    function filtrarReservas() {
+        const termo = busca.value.trim().toLocaleLowerCase('pt-BR');
+        const statusEscolhido = filtroStatus.value;
+        let visiveis = 0;
 
-                <button type="submit" class="btn" style="background:#2563eb; color:#fff; padding:0.6rem 1.2rem; border:none; border-radius:6px; cursor:pointer;">Confirmar Reserva</button>
-            </form>
-        </div>
+        linhas.forEach(function (linha) {
+            const texto = (
+                linha.dataset.pesquisa || ''
+            ).toLocaleLowerCase('pt-BR');
 
-        <!-- Listagem das Reservas do Próprio Leitor -->
-        <div class="card-container" style="background:#fff; padding:1.5rem; border-radius:8px; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-            <h2 class="card-title" style="margin-bottom: 1rem;">Meus Livros Reservados</h2>
-            <?php if (empty($reservas)): ?>
-                <p>Você não possui nenhuma reserva no momento.</p>
-            <?php else: ?>
-                <div class="table-responsive">
-                    <table style="width:100%; border-collapse:collapse;">
-                        <thead>
-                            <tr style="border-bottom:1px solid #e2e8f0; text-align:left;">
-                                <th style="padding:0.75rem;">Livro</th>
-                                <th style="padding:0.75rem;">Data da Reserva</th>
-                                <th style="padding:0.75rem;">Status</th>
-                                <th style="padding:0.75rem;">Ação</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($reservas as $item): ?>
-                                <tr style="border-bottom:1px solid #f1f5f9;">
-                                    <td style="padding:0.75rem;">
-                                        <strong><?= htmlspecialchars($item['titulo'], ENT_QUOTES, 'UTF-8') ?></strong><br>
-                                        <small style="color: #64748b;"><?= htmlspecialchars($item['autor'] ?? '', ENT_QUOTES, 'UTF-8') ?></small>
-                                    </td>
-                                    <td style="padding:0.75rem;"><?= htmlspecialchars($item['data_reserva'], ENT_QUOTES, 'UTF-8') ?></td>
-                                    <td style="padding:0.75rem;">
-                                        <span style="padding:0.2rem 0.5rem; border-radius:4px; font-size:0.85rem; background: <?= $item['status'] === 'ativa' ? '#dcfce7; color:#15803d;' : '#fee2e2; color:#b91c1c;' ?>">
-                                            <?= htmlspecialchars(ucfirst($item['status']), ENT_QUOTES, 'UTF-8') ?>
-                                        </span>
-                                    </td>
-                                    <td style="padding:0.75rem;">
-                                        <?php if ($item['status'] === 'ativa'): ?>
-                                            <form method="POST" onsubmit="return confirm('Deseja cancelar sua reserva?');" style="margin: 0;">
-                                                <input type="hidden" name="acao" value="cancelar_reserva">
-                                                <input type="hidden" name="id_reserva" value="<?= (int) $item['id_reserva'] ?>">
-                                                <button type="submit" style="background:#ef4444; color:#fff; border:none; padding:0.3rem 0.6rem; border-radius:4px; cursor:pointer; font-size:0.8rem;">Cancelar</button>
-                                            </form>
-                                        <?php else: ?>
-                                            —
-                                        <?php endif; ?>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            <?php endif; ?>
-        </div>
-    </main>
+            const status = linha.dataset.status || '';
 
-    <!-- Script de Pesquisa Dinâmica -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const inputBusca = document.getElementById('busca_livro');
-            const selectLivro = document.getElementById('id_livro');
-            
-            if (inputBusca && selectLivro) {
-                const optionsOriginais = Array.from(selectLivro.options);
+            const correspondeTexto = texto.includes(termo);
+            const correspondeStatus =
+                statusEscolhido === '' || status === statusEscolhido;
 
-                inputBusca.addEventListener('input', function() {
-                    const termo = inputBusca.value.toLowerCase().trim();
-                    selectLivro.innerHTML = '';
-                    
-                    const optionsFiltradas = optionsOriginais.filter(opt => {
-                        if (opt.value === '') return true;
-                        
-                        const titulo = opt.getAttribute('data-titulo') || '';
-                        const autor = opt.getAttribute('data-autor') || '';
-                        const isbn = opt.getAttribute('data-isbn') || '';
-                        const ano = opt.getAttribute('data-ano') || '';
-                        const id = opt.getAttribute('data-id') || '';
+            const mostrar = correspondeTexto && correspondeStatus;
 
-                        return titulo.includes(termo) || 
-                               autor.includes(termo) || 
-                               isbn.includes(termo) || 
-                               ano.includes(termo) || 
-                               id.includes(termo);
-                    });
+            linha.hidden = !mostrar;
 
-                    optionsFiltradas.forEach(opt => selectLivro.appendChild(opt));
-                    
-                    if (optionsFiltradas.length === 2) {
-                        selectLivro.selectedIndex = 1;
-                    } else {
-                        selectLivro.selectedIndex = 0;
-                    }
-                });
+            if (mostrar) {
+                visiveis++;
             }
         });
-    </script>
+
+        if (semResultados) {
+            semResultados.hidden = visiveis !== 0;
+        }
+    }
+
+    busca.addEventListener('input', filtrarReservas);
+    filtroStatus.addEventListener('change', filtrarReservas);
+});
+</script>
 </body>
 </html>

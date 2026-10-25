@@ -1,8 +1,55 @@
-logo-nome">Biblioteca Municipal de Arujá</span>
-          <span class="logo-descricao">Professora Alda Martins Soncini</span>
-        </span>
-      </a>
 
+<?php
+// =============================================
+// TELA INICIAL — BIBLIOTECA MUNICIPAL DE ARUJÁ
+// =============================================
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Conexão com o banco de dados
+require_once __DIR__ . '/../includes/conexao.php';
+
+// Verifica quem está autenticado
+$usuarioLogado = isset($_SESSION['id_usuario']);
+$funcionarioLogado = isset($_SESSION['id_funcionario']);
+
+
+// Define o nome para exibição
+$nomeLogado = '';
+
+if ($usuarioLogado) {
+    $nomeLogado = $_SESSION['nome_usuario'] ?? '';
+} elseif ($funcionarioLogado) {
+    $nomeLogado = $_SESSION['nome_funcionario'] ?? '';
+}
+$estaLogado = $usuarioLogado || $funcionarioLogado;
+
+$totalNotificacoesNaoLidas = 0;
+
+if ($usuarioLogado) {
+    try {
+        $stmtNotificacoes = $conexao->prepare("
+            SELECT COUNT(*)
+            FROM notificacoes
+            WHERE id_usuario = :id_usuario
+              AND lida = 0
+        ");
+
+        $stmtNotificacoes->execute([
+            'id_usuario' => $_SESSION['id_usuario']
+        ]);
+
+        $totalNotificacoesNaoLidas = (int) $stmtNotificacoes->fetchColumn();
+
+    } catch (PDOException $e) {
+        error_log('Erro ao contar notificações: ' . $e->getMessage());
+    }
+}
+?>
+
+        
       <button class="menu-mobile" id="menuMobile"
         aria-label="Abrir menu" aria-expanded="false"
         aria-controls="navbarAbas">☰</button>
@@ -14,7 +61,8 @@ logo-nome">Biblioteca Municipal de Arujá</span>
   <meta name="theme-color" content="#244e5b">
   <meta name="description" content="Conheça a Biblioteca Municipal Professora Alda Martins Soncini, em Arujá, e explore seu acervo.">
   <title>Biblioteca Municipal de Arujá</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=5">
+  
 </head>
 <body>
 
@@ -31,16 +79,66 @@ logo-nome">Biblioteca Municipal de Arujá</span>
       <button class="menu-mobile" id="menuMobile"
         aria-label="Abrir menu" aria-expanded="false"
         aria-controls="navbarAbas">☰</button>
+      
 
-      <nav class="navbar-abas" id="navbarAbas" aria-label="Navegação principal">
-        <button class="aba-botao ativo" data-pagina="inicio">🏠 Tela Inicial</button>
-         <a href="../tela_cadastro/index.php" class="aba-botao" style="text-decoration: none; display: inline-flex; align-items: center;">Acervo</a>
-        <a href="../tela_emprestimo_usuario/index.php" class="aba-botao" style="text-decoration: none; display: inline-flex; align-items: center;">📖 Empréstimos</a>
-        <button class="aba-botao" data-pagina="eventos">📅 Eventos</button>
-        <button class="aba-botao" data-pagina="sobre">📖 Sobre Nós</button>
-        <button class="aba-botao" data-pagina="perfil">👤 Meu Perfil</button>
-        <a href="../tela_cadastro/index.php" class="aba-botao" style="text-decoration: none; display: inline-flex; align-items: center;">✍️ login/Cadastre-se</a>
-      </nav>
+<a href="../tela_notificacao/index.php"
+   class="botao-notificacoes"
+   aria-label="Abrir notificações"
+   title="Notificações não lidas: <?= $totalNotificacoesNaoLidas ?>">
+
+    🔔
+
+    <?php if ($totalNotificacoesNaoLidas > 0): ?>
+        <span class="notificacao-contador">
+            <?= $totalNotificacoesNaoLidas > 99 ? '99+' : $totalNotificacoesNaoLidas ?>
+        </span>
+    <?php endif; ?>
+
+</a>
+
+<a href="../mapa_virtual/index.php"
+   class="botao-atalho-mapa"
+   title="Abrir Mapa Virtual"
+   aria-label="Abrir Mapa Virtual">
+    <span aria-hidden="true">🗺️</span>
+</a>
+
+
+
+<div class="painel-notificacoes" id="painelNotificacoes" hidden>
+  <div class="painel-notificacoes-cabecalho">
+    <h2>Notificações</h2>
+    <button type="button" id="fecharNotificacoes"
+            aria-label="Fechar notificações">×</button>
+  </div>
+
+  <div id="listaNotificacoes" aria-live="polite">
+    <p>Você não tem notificações novas.</p>
+  </div>
+</div>
+    <button class="aba-botao ativo" data-pagina="inicio" data-i18n="inicio">🏠 Tela Inicial</button>
+
+    <a href="../tela_acervo_usuario/tela_acervo_usuario.php"
+       class="aba-botao"
+       style="text-decoration:none; display:inline-flex; align-items:center;"
+       data-i18n="acervo">📚 Acervo</a>
+
+    <a href="../tela_emprestimo_usuario/index.php"
+       class="aba-botao"
+       style="text-decoration:none; display:inline-flex; align-items:center;"
+       data-i18n="emprestimos">📖 Empréstimos</a>
+
+    <button class="aba-botao" data-pagina="eventos" data-i18n="eventos">📅 Eventos</button>
+
+    <button class="aba-botao" data-pagina="sobre" data-i18n="sobre">📖 Sobre Nós</button>
+
+    <button class="aba-botao" data-pagina="perfil" data-i18n="perfil">👤 Meu Perfil</button>
+
+    <a href="../tela_cadastro/index.php"
+       class="aba-botao"
+       style="text-decoration:none; display:inline-flex; align-items:center;"
+       data-i18n="login">✍️ Login/Cadastre-se</a>
+</nav>
     </div>
   </header>
 
@@ -102,6 +200,22 @@ logo-nome">Biblioteca Municipal de Arujá</span>
               <div class="slide-ilustracao" aria-hidden="true">☕</div>
             </article>
 
+            
+<article class="slide" aria-label="Slide 5 de 5">
+  <div class="slide-texto">
+    <span class="etiqueta">NOVIDADE NA BIBLIOTECA</span>
+    <h2>Encontre seu próximo livro com o Mapa Virtual!</h2>
+    <p>
+      Descubra em qual estante, prateleira e posição cada livro está
+      organizado. Explore nosso acervo de um jeito mais fácil!
+    </p>
+    <a class="botao" href="../mapa_virtual/index.php">
+      Explorar o mapa virtual →
+    </a>
+  </div>
+  <div class="slide-ilustracao" aria-hidden="true">🗺️📚</div>
+</article>
+
           </div>
 
           <button class="carrossel-seta carrossel-anterior"
@@ -119,6 +233,9 @@ logo-nome">Biblioteca Municipal de Arujá</span>
               aria-pressed="false"></button>
             <button class="indicador" aria-label="Ir para slide 4"
               aria-pressed="false"></button>
+            <button class="indicador" aria-label="Ir para slide 5"
+  aria-pressed="false"></button>
+
           </div>
         </div>
       </div>
@@ -134,8 +251,17 @@ logo-nome">Biblioteca Municipal de Arujá</span>
                 cultura, imaginação e conhecimento. Sinta-se em casa entre nossas páginas.
               </p>
             </div>
-            <button class="botao" data-ir="acervo" onclick="window.location.href='../tela_acervo_usuario/tela_acervo_usuario.php'>Ver todo o acervo →</button>
+            <button
+  class="botao"
+  type="button"
+  onclick="window.location.href='../tela_acervo_usuario/tela_acervo_usuario.php'">
+  Ver todo o acervo →
+</button>
+
+<a class="botao" href="../mapa_virtual/index.php">
+  🗺️ Explorar Mapa Virtual →
 </a>
+
           </div>
 
           <h2 class="titulo-secao" style="font-size:1.65rem;margin-bottom:25px">
@@ -178,77 +304,10 @@ logo-nome">Biblioteca Municipal de Arujá</span>
             <h2 id="titulosAcervo" class="titulo-secao">Títulos do acervo</h2>
             <p>Confira alguns dos títulos indicados para compor o catálogo da biblioteca.</p>
 
-            <div class="categorias-acervo">
-              <section aria-labelledby="ficcao-romance">
-                <h3 id="ficcao-romance">Romance e literatura contemporânea</h3>
-                <ul>
-                  <li>A Culpa é das Estrelas</li>
-                  <li>Nem Te Conto</li>
-                  <li>Amor &amp; Gelato</li>
-                  <li>O Menino do Pijama Listrado</li>
-                  <li>Como Eu Era Antes de Você</li>
-                </ul>
-              </section>
-
-              <section aria-labelledby="classicos-fantasia">
-                <h3 id="classicos-fantasia">Clássicos, fantasia e aventura</h3>
-                <ul>
-                  <li>1984</li>
-                  <li>Admirável Mundo Novo</li>
-                  <li>Frankenstein</li>
-                  <li>Drácula</li>
-                  <li>A Ilha do Tesouro</li>
-                  <li>A coleção de Harry Potter</li>
-                </ul>
-              </section>
-
-              <section aria-labelledby="misterio">
-                <h3 id="misterio">Mistério e investigação</h3>
-                <ul>
-                  <li>O Código Da Vinci</li>
-                  <li>E Não Sobrou Nenhum</li>
-                  <li>Livros de Sherlock Holmes</li>
-                </ul>
-              </section>
-
-              <section aria-labelledby="brasileira">
-                <h3 id="brasileira">Literatura brasileira</h3>
-                <ul>
-                  <li>O Alienista</li>
-                  <li>Capitães da Areia</li>
-                  <li>Outros livros da literatura brasileira</li>
-                </ul>
-              </section>
-
-              <section aria-labelledby="conhecimento">
-                <h3 id="conhecimento">Biografias, história, ciência e conhecimento</h3>
-                <ul>
-                  <li>Eu Sou Malala</li>
-                  <li>Uma Breve História do Tempo</li>
-                  <li>Sapiens: Uma Breve História da Humanidade</li>
-                  <li>O Mundo de Sofia</li>
-                  <li>Hábitos Atômicos</li>
-                </ul>
-              </section>
-
-              <section aria-labelledby="estudos">
-                <h3 id="estudos">Estudos e preparação</h3>
-                <ul>
-                  <li>Livros de preparação para o ENEM</li>
-                </ul>
-              </section>
-            </div>
-          </section>
-
-          <div class="mensagem-vazia" id="mensagemVazia" hidden>
-            <p style="font-size:2rem">🔎</p>
-            <h2>Nenhum livro encontrado</h2>
-            <p>Tente pesquisar outro título ou autor.</p>
-          </div>
-        </div>
-      </section>
-    </section>
-
+           </section>
+</div>
+</section>
+</section>
     <section class="pagina-conteudo" id="pagina-eventos" aria-label="Eventos">
       <section class="secao">
         <div class="container">
@@ -261,11 +320,18 @@ logo-nome">Biblioteca Municipal de Arujá</span>
             </div>
 
             <article class="eventos-card">
-              <span class="etiqueta">EVENTOS PRÓXIMOS</span>
-              <h2 class="titulo-secao" style="font-size:1.5rem">Tem interesse em participar?</h2>
-              <p>Telefone: (11) 4653-4042</p>
-              <p>Rua São Paulo, nº 110 — Jardim Planalto, Arujá – SP</p>
-            </article>
+  <span class="etiqueta">EVENTOS DA BIBLIOTECA</span>
+  <h2 class="titulo-secao" style="font-size:1.5rem">
+    Próximos encontros e atividades
+  </h2>
+
+  <div id="listaEventos" aria-live="polite">
+    <p>Carregando eventos...</p>
+  </div>
+
+  <p>Telefone: (11) 4653-4042</p>
+  <p>Rua São Paulo, nº 110 — Jardim Planalto, Arujá – SP</p>
+</article>
           </div>
         </div>
       </section>
@@ -388,7 +454,7 @@ logo-nome">Biblioteca Municipal de Arujá</span>
             </div>
             <div class="estatistica-card">
               <span>Leituras concluídas</span>
-              <strong id="totalLeituras">3</strong>
+              <strong id="totalLeituras">0</strong>
             </div>
           </div>
         </div>
@@ -476,6 +542,6 @@ logo-nome">Biblioteca Municipal de Arujá</span>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=8"></script>
 </body>
 </html>

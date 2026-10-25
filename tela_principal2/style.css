@@ -235,20 +235,14 @@
     ======================================== */
 
     .navbar-superior {
-
-      position: sticky;
-
-      top: 0;
-
-      z-index: 1000;
-
-      background: rgba(255, 255, 255, .96);
-
-      backdrop-filter: blur(12px);
-
-      border-bottom: 1px solid var(--cinza-claro);
-
-    }
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    background: #ffffff;
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--cinza-claro);
+}
 
 
 
@@ -1662,8 +1656,6 @@
 
     }
 
-
-
     .modal-fundo {
 
       position: fixed;
@@ -1708,20 +1700,13 @@
 
     }
 
-
-
     .modal-topo {
 
       display: flex;
-
       justify-content: space-between;
-
       gap: 15px;
-
       align-items: start;
-
       margin-bottom: 15px;
-
     }
 
 
@@ -1996,15 +1981,11 @@
 
       }
 
-
-
       .livro-acoes .botao {
 
         padding: 8px;
 
       }
-
-
 
       .sobre-intro {
 
@@ -2155,3 +2136,383 @@
 }
 
   
+/* ===== CARDS DOS EVENTOS ===== */
+
+#listaEventos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px;
+  margin: 22px 0;
+}
+
+.evento-item {
+  position: relative;
+  overflow: hidden;
+  padding: 22px;
+  background: #ffffff;
+  border: 1px solid #dce8e8;
+  border-radius: 16px;
+  box-shadow: 0 5px 16px rgba(36, 78, 91, 0.10);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.evento-item::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: #4d8790;
+}
+
+.evento-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 9px 22px rgba(36, 78, 91, 0.16);
+}
+
+.evento-item h3 {
+  margin: 5px 0 14px;
+  color: #244e5b;
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+
+.evento-item p {
+  margin: 10px 0 0;
+  color: #52666b;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.evento-item p:nth-of-type(1) {
+  display: inline-block;
+  padding: 6px 10px;
+  background: #eaf4f3;
+  border-radius: 8px;
+  color: #244e5b;
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  #listaEventos {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Botão Saiba mais dos eventos */
+.evento-saiba-mais {
+  margin-top: 18px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 10px;
+  background: #244e5b;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.evento-saiba-mais:hover {
+  background: #356b78;
+  transform: translateY(-2px);
+}
+
+.evento-saiba-mais:focus-visible {
+  outline: 3px solid #91c5c9;
+  outline-offset: 3px;
+}
+
+
+/* Pesquisa rápida de livros nas reservas */
+.form-reserva {
+    position: relative;
+}
+
+#busca_livro {
+    display: block;
+    width: 100%;
+    padding: 14px 16px;
+    margin: 8px 0 0;
+    border: 1px solid var(--borda, #DCE3ED);
+    border-radius: 8px;
+    background: #FFFFFF;
+    color: var(--texto, #263449);
+    font: inherit;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#busca_livro:focus {
+    border-color: #C5A04F;
+    box-shadow: 0 0 0 3px #C5A04F30;
+}
+
+.sugestoes-livros {
+    width: 100%;
+    margin-top: 6px;
+    overflow: hidden;
+    border: 1px solid #DCE3ED;
+    border-radius: 8px;
+    background: #FFFFFF;
+    box-shadow: 0 8px 20px #142B4A15;
+}
+
+.sugestoes-livros[hidden] {
+    display: none;
+}
+
+.sugestao-livro {
+    display: block;
+    width: 100%;
+    padding: 13px 16px;
+    border: none;
+    border-bottom: 1px solid #DCE3ED;
+    background: #FFFFFF;
+    color: #142B4A;
+    text-align: left;
+    font: inherit;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.sugestao-livro:last-child {
+    border-bottom: none;
+}
+
+.sugestao-livro:hover,
+.sugestao-livro:focus-visible {
+    background: #EDF2F8;
+    outline: none;
+    box-shadow: inset 3px 0 0 #C5A04F;
+}
+
+.sugestoes-livros p {
+    margin: 0;
+    padding: 14px 16px;
+    color: #68768A;
+    font-size: 14px;
+
+  }
+
+  
+/* Ajuste do link Login/Cadastre-se */
+.navbar-abas > a:last-child {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 11px 16px;
+    border: 1px solid var(--cinza-claro);
+    border-radius: 10px;
+    background: var(--azul-gelo);
+    color: var(--azul-petroleo);
+    text-decoration: none;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background 0.25s, color 0.25s, border-color 0.25s;
+}
+
+.navbar-abas > a:last-child:hover {
+    background: var(--azul-claro);
+    color: var(--azul-escuro);
+    border-color: var(--azul-medio);
+}
+
+@media (max-width: 700px) {
+    .navbar-abas > a:last-child {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
+.navbar-abas > a:last-child {
+  padding: 10px 14px;
+min-height: auto;
+background: var(--azul-gelo);
+border: 1px solid var(--cinza-claro);
+border-radius: 10px;
+}
+
+/* Fundo branco em toda a barra de navegação */
+.navbar-superior {
+    width: 100%;
+    background: #ffffff;
+}
+
+.navbar-superior .navbar-interno {
+    width: 100%;
+    max-width: none;
+    padding-left: 32px;
+    padding-right: 8px;
+    gap: 12px;
+}
+.navbar-superior {
+    width: 100%;
+    background: #ffffff;
+    box-shadow: 60px 0 0 #ffffff, -60px 0 0 #ffffff;
+}
+
+.navbar-superior .navbar-interno {
+    width: 100%;
+    max-width: none;
+    padding-left: 32px;
+    padding-right: 8px;
+    gap: 12px;
+}
+
+/* Sininho de notificações */
+.botao-notificacoes {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  margin: 0 10px;
+  border: 1px solid #d8e5e7;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #244e5b;
+  font-size: 21px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.botao-notificacoes:hover {
+  background: #eaf3f4;
+  transform: translateY(-2px);
+}
+
+.notificacao-contador {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 50%;
+  background: #c0392b;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 18px;
+  text-align: center;
+}
+
+
+/* ===== CABEÇALHO MAIS COMPACTO ===== */
+
+.navbar-superior .navbar-interno {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-left: 22px;
+    padding-right: 22px;
+}
+
+.navbar-superior .logo {
+    gap: 8px;
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+.navbar-superior .logo-nome {
+    font-size: 1.25rem;
+    white-space: nowrap;
+}
+
+.navbar-superior .logo-descricao {
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+}
+
+.navbar-superior .botao-notificacoes {
+    flex-shrink: 0;
+    margin: 0 4px;
+}
+
+.navbar-superior .navbar-abas {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 2px;
+}
+
+.navbar-superior .aba-botao {
+    padding: 9px 10px;
+    font-size: 0.92rem;
+}
+
+.navbar-superior .navbar-abas > a:last-child {
+    padding: 9px 10px;
+    font-size: 0.92rem;
+}
+
+@media (max-width: 1200px) and (min-width: 701px) {
+    .navbar-superior .navbar-interno {
+        gap: 6px;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .navbar-superior .logo-nome {
+        font-size: 1.1rem;
+    }
+
+    .navbar-superior .aba-botao,
+    .navbar-superior .navbar-abas > a:last-child {
+        padding: 8px 6px;
+        font-size: 0.82rem;
+    }
+
+  }
+  
+/* Atalho do Mapa Virtual no cabeçalho */
+.botao-atalho-mapa {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 40px;
+    height: 40px;
+    box-sizing: border-box;
+
+    color: #245c45;
+    background: #f0f6f2;
+    border: 1px solid #d5e5da;
+    border-radius: 50%;
+
+    font-size: 20px;
+    text-decoration: none;
+
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.botao-atalho-mapa:hover {
+    background: #dcebe1;
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+.botao-atalho-mapa:focus-visible {
+    outline: 2px solid #245c45;
+    outline-offset: 3px;
+}
+
+
+/* Remove o sublinhado do link do Mapa Virtual no carrossel */
+#carrosselSlides .slide a.botao {
+    text-decoration: none;
+}
+
+#carrosselSlides .slide a.botao:hover,
+#carrosselSlides .slide a.botao:focus,
+#carrosselSlides .slide a.botao:visited,
+#carrosselSlides .slide a.botao:active {
+    text-decoration: none;
+}
+

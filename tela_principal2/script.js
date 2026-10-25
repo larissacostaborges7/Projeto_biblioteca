@@ -1,239 +1,22 @@
-    /* ==========================================
 
-       1. DADOS DEMONSTRATIVOS DO ACERVO
-
-       Capas obtidas do serviço Open Library.
-
-       Os livros, estados e reservas são exemplos.
-
-    ========================================== */
-document.querySelector('[data-ir="acervo"]').addEventListener('click', function() {
-    window.location.href = '../Projeto_biblioteca/tela_acrevo_usuario/tela_acervo_usuario.php';
-});
-
-
-    const livros = [
-
-      {
-
-        id: 1,
-
-        titulo: "Dom Casmurro",
-
-        autor: "Machado de Assis",
-
-        categoria: "Clássico brasileiro",
-
-        disponivel: true,
-
-        capa: "https://covers.openlibrary.org/b/isbn/9788594318241-M.jpg",
-
-        descricao: "Um dos grandes clássicos da literatura brasileira. Bentinho revisita sua história de amor com Capitu, entre memórias, dúvidas e ciúmes."
-
-      },
-
-      {
-
-        id: 2,
-
-        titulo: "O Pequeno Príncipe",
-
-        autor: "Antoine de Saint-Exupéry",
-
-        categoria: "Fábula",
-
-        disponivel: true,
-
-        capa: "https://covers.openlibrary.org/b/isbn/9780156012195-M.jpg",
-
-        descricao: "Uma narrativa poética sobre amizade, afeto e o modo como enxergamos o mundo."
-
-      },
-
-      {
-
-        id: 3,
-
-        titulo: "Orgulho e Preconceito",
-
-        autor: "Jane Austen",
-
-        categoria: "Romance",
-
-        disponivel: false,
-
-        capa: "https://covers.openlibrary.org/b/isbn/9780141439518-M.jpg",
-
-        descricao: "Uma história de relações, primeiras impressões e convenções sociais na Inglaterra do século XIX."
-
-      },
-
-      {
-
-        id: 4,
-
-        titulo: "A Biblioteca da Meia-Noite",
-
-        autor: "Matt Haig",
-
-        categoria: "Ficção",
-
-        disponivel: true,
-
-        capa: "https://covers.openlibrary.org/b/isbn/9780525559474-M.jpg",
-
-        descricao: "Entre possibilidades de vidas diferentes, Nora explora escolhas, arrependimentos e novos caminhos."
-
-      },
-
-      {
-
-        id: 5,
-
-        titulo: "Harry Potter e a Pedra Filosofal",
-
-        autor: "J. K. Rowling",
-
-        categoria: "Fantasia",
-
-        disponivel: true,
-
-        capa: "https://covers.openlibrary.org/b/isbn/9780590353427-M.jpg",
-
-        descricao: "O início da jornada de um jovem que descobre um mundo de magia, amizade e mistérios."
-
-      },
-
-      {
-
-        id: 6,
-
-        titulo: "A Hora da Estrela",
-
-        autor: "Clarice Lispector",
-
-        categoria: "Literatura brasileira",
-
-        disponivel: false,
-
-        capa: "https://covers.openlibrary.org/b/isbn/9788520925687-M.jpg",
-
-        descricao: "A trajetória de Macabéa é narrada em uma obra que provoca reflexões sobre existência e desigualdade."
-
-      },
-
-      {
-
-        id: 7,
-
-        titulo: "O Hobbit",
-
-        autor: "J. R. R. Tolkien",
-
-        categoria: "Fantasia",
-
-        disponivel: true,
-
-        capa: "https://covers.openlibrary.org/b/isbn/9780547928227-M.jpg",
-
-        descricao: "Bilbo Bolseiro deixa sua vida tranquila para participar de uma aventura repleta de perigos e descobertas."
-
-      },
-
-      {
-
-        id: 8,
-
-        titulo: "1984",
-
-        autor: "George Orwell",
-
-        categoria: "Ficção distópica",
-
-        disponivel: true,
-
-        capa: "https://covers.openlibrary.org/b/isbn/9780451524935-M.jpg",
-
-        descricao: "Uma distopia sobre vigilância, manipulação da informação e liberdade individual."
-
-      },
-
-      {
-
-        id: 9,
-
-        titulo: "Capitães da Areia",
-
-        autor: "Jorge Amado",
-
-        categoria: "Literatura brasileira",
-
-        disponivel: true,
-
-        capa: "https://covers.openlibrary.org/b/isbn/9788535911695-M.jpg",
-
-        descricao: "A vida de meninos em situação de abandono nas ruas de Salvador, marcada por amizade e desigualdade."
-
-      },
-
-      {
-
-        id: 10,
-
-        titulo: "A Revolução dos Bichos",
-
-        autor: "George Orwell",
-
-        categoria: "Sátira",
-
-        disponivel: false,
-
-        capa: "https://covers.openlibrary.org/b/isbn/9780451526342-M.jpg",
-
-        descricao: "Uma fábula política sobre poder, manipulação e os rumos de uma revolução."
-
-      },
-
-      {
-
-        id: 11,
-
-        titulo: "Mulherzinhas",
-
-        autor: "Louisa May Alcott",
-
-        categoria: "Romance",
-
-        disponivel: true,
-
-        capa: "https://covers.openlibrary.org/b/isbn/9780147514011-M.jpg",
-
-        descricao: "Acompanhe as irmãs March enquanto amadurecem, enfrentam desafios e descobrem seus próprios sonhos."
-
-      },
-
-      {
-
-        id: 12,
-
-        titulo: "Coraline",
-
-        autor: "Neil Gaiman",
-
-        categoria: "Fantasia",
-
-        disponivel: true,
-
-        capa: "https://covers.openlibrary.org/b/isbn/9780380807345-M.jpg",
-
-        descricao: "Uma garota descobre uma versão inquietante de sua casa e precisa reunir coragem para enfrentar seus segredos."
-
-      }
-
-    ];
-
-
-
+let livros = [];
+async function carregarLivros() {
+    try {
+        const resposta = await fetch("buscar_livros.php");
+        const dados = await resposta.json();
+
+        if (!dados.sucesso) {
+            console.error("Erro ao carregar os livros:", dados.mensagem);
+            return;
+        }
+
+        livros = dados.livros;
+        atualizarTudo();
+
+    } catch (erro) {
+        console.error("Erro ao buscar os livros:", erro);
+    }
+}
     /* ==========================================
 
        2. ESTADO DA APLICAÇÃO
@@ -300,11 +83,7 @@ document.querySelector('[data-ir="acervo"]').addEventListener('click', function(
 
 
 
-    favoritos = favoritos.filter(id => livros.some(livro => livro.id === id));
-
-    emprestimos = emprestimos.filter(id => livros.some(livro => livro.id === id));
-
-
+   
 
     const $ = seletor => document.querySelector(seletor);
 
@@ -374,27 +153,28 @@ document.querySelector('[data-ir="acervo"]').addEventListener('click', function(
 
 
 
-    $$(".aba-botao").forEach(botao => {
-
-      botao.addEventListener("click", () => {
-
-        mostrarPagina(botao.dataset.pagina);
-
-      });
-
-    });
+    $$(".aba-botao[data-pagina]").forEach(botao => {
+  botao.addEventListener("click", () => {
+    const destino = botao.dataset.pagina;
+    mostrarPagina(destino);
+  });
+});
 
 
 
     $$("[data-ir]").forEach(botao => {
+  botao.addEventListener("click", () => {
+    const destino = botao.dataset.ir;
 
-      botao.addEventListener("click", () => {
+    if (destino === "acervo") {
+      window.location.href =
+        "../tela_acervo_usuario/tela_acervo_usuario.php";
+      return;
+    }
 
-        mostrarPagina(botao.dataset.ir);
-
-      });
-
-    });
+    mostrarPagina(destino);
+  });
+});
 
 
 
@@ -620,7 +400,11 @@ document.querySelector('[data-ir="acervo"]').addEventListener('click', function(
 
       const imagem = document.createElement("img");
 
-      imagem.src = livro.capa;
+     const caminhoCapa = (livro.capa || "").replace(/^\/+/, "");
+
+imagem.src = caminhoCapa
+    ? new URL("../" + caminhoCapa, window.location.href).href
+    : "";
 
       imagem.alt = "Capa do livro " + livro.titulo;
 
@@ -766,11 +550,15 @@ document.querySelector('[data-ir="acervo"]').addEventListener('click', function(
 
 
 
-    function atualizarRecomendados() {
+    
+function atualizarRecomendados() {
+    const recomendados = livros
+        .filter(livro => livro.disponivel)
+        .slice(0, 4);
 
-      preencherGrade($("#livrosRecomendados"), livros.slice(0, 4));
+    preencherGrade($("#livrosRecomendados"), recomendados);
+}
 
-    }
 
 
 
@@ -848,7 +636,11 @@ document.querySelector('[data-ir="acervo"]').addEventListener('click', function(
 
 
 
-      $("#mensagemVazia").hidden = resultados.length !== 0;
+      const mensagemVazia = $("#mensagemVazia");
+
+if (mensagemVazia) {
+    mensagemVazia.hidden = resultados.length !== 0;
+}
 
       $("#gradeAcervo").hidden = resultados.length === 0;
 
@@ -908,31 +700,43 @@ document.querySelector('[data-ir="acervo"]').addEventListener('click', function(
 
     ========================================== */
 
+   
+async function alternarFavorito(id) {
+  try {
+    const resposta = await fetch("favoritar.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        id_livro: Number(id)
+      })
+    });
 
+    const dados = await resposta.json();
 
-    function alternarFavorito(id) {
-
-      if (favoritos.includes(id)) {
-
-        favoritos = favoritos.filter(item => item !== id);
-
-        notificar("Livro removido dos favoritos.");
-
-      } else {
-
-        favoritos.push(id);
-
-        notificar("Livro adicionado aos favoritos! ♥");
-
-      }
-
-
-
-      salvarArmazenamento(CHAVE_FAVORITOS, favoritos);
-
-      atualizarTudo();
-
+    if (!resposta.ok || !dados.sucesso) {
+      notificar(dados.mensagem || "Não foi possível atualizar os favoritos.");
+      return;
     }
+
+    if (dados.favoritado) {
+      if (!favoritos.includes(Number(id))) {
+        favoritos.push(Number(id));
+      }
+    } else {
+      favoritos = favoritos.filter(item => Number(item) !== Number(id));
+    }
+
+    atualizarTudo();
+    notificar(dados.mensagem);
+
+  } catch (erro) {
+    console.error("Erro ao atualizar favoritos:", erro);
+    notificar("Não foi possível conectar aos favoritos.");
+  }
+}
+
 
 
 
@@ -1311,15 +1115,223 @@ document.querySelector('[data-ir="acervo"]').addEventListener('click', function(
     ========================================== */
 
 
+$("#anoAtual").textContent = new Date().getFullYear();
 
-    $("#anoAtual").textContent = new Date().getFullYear();
+async function inicializarPagina() {
+    try {
+        const resposta = await fetch("buscar_livros.php");
+
+        if (!resposta.ok) {
+            throw new Error("Falha ao buscar os livros.");
+        }
+
+        const dados = await resposta.json();
+
+        if (!dados.sucesso || !Array.isArray(dados.livros)) {
+            throw new Error("A resposta do PHP não contém os livros.");
+        }
+
+        livros = dados.livros.map(livro => ({
+            ...livro,
+            id: Number(livro.id),
+            disponivel:
+                livro.disponivel === true ||
+                livro.disponivel === 1 ||
+                livro.disponivel === "1"
+        }));
+
+        
+const respostaFavoritos = await fetch("buscar_favoritos.php");
+
+if (!respostaFavoritos.ok) {
+    throw new Error("Não foi possível carregar os favoritos.");
+}
+
+const dadosFavoritos = await respostaFavoritos.json();
+
+if (!dadosFavoritos.sucesso) {
+    throw new Error(
+        dadosFavoritos.mensagem || "Erro ao carregar favoritos."
+    );
+}
+
+favoritos = dadosFavoritos.favoritos
+    .map(Number)
+    .filter(id => livros.some(livro => livro.id === id));
+
+emprestimos = emprestimos.filter(id =>
+    livros.some(livro => livro.id === Number(id))
+);
+
+salvarArmazenamento(CHAVE_EMPRESTIMOS, emprestimos);
 
 
+        mostrarSlide(0);
+        atualizarTudo();
 
-    mostrarSlide(0);
+    } catch (erro) {
+        console.error("Erro ao carregar os livros:", erro);
 
-    atualizarTudo();
+        const grade = $("#livrosRecomendados");
+        if (grade) {
+            grade.textContent =
+                "Não foi possível carregar as recomendações.";
+        }
+    }
+}
+
+inicializarPagina();
 
 
+    
 
-  
+
+async function carregarEventos() {
+  const lista = document.getElementById("listaEventos");
+
+  if (!lista) return;
+
+  try {
+    const resposta = await fetch("buscar_eventos.php");
+
+    if (!resposta.ok) {
+      throw new Error("Falha ao buscar eventos.");
+    }
+
+    const eventos = await resposta.json();
+
+    lista.replaceChildren();
+
+    if (eventos.length === 0) {
+      const mensagem = document.createElement("p");
+      mensagem.textContent = "Não há eventos cadastrados no momento.";
+      lista.appendChild(mensagem);
+      return;
+    }
+
+    eventos.forEach((evento) => {
+      const cartao = document.createElement("article");
+      cartao.className = "evento-item";
+
+      const titulo = document.createElement("h3");
+      titulo.textContent = evento.titulo;
+
+      const data = document.createElement("p");
+      const [ano, mes, dia] = evento.data_evento.split("-");
+      data.textContent = `📅 ${dia}/${mes}/${ano}`;
+
+     const descricao = document.createElement("p");
+descricao.textContent = evento.descricao || "Sem descrição.";
+
+// Imagem do evento
+if (evento.imagem) {
+  const imagem = document.createElement("img");
+
+  imagem.src = new URL("../" + evento.imagem.replace(/^\/+/, ""), window.location.href).href;
+  imagem.alt = "Imagem do evento " + evento.titulo;
+  imagem.className = "evento-imagem";
+  imagem.loading = "lazy";
+
+  imagem.addEventListener("error", () => {
+    console.error("Não foi possível carregar a imagem:", imagem.src);
+    imagem.hidden = true;
+  });
+
+  cartao.appendChild(imagem);
+}
+
+const botao = document.createElement("button");
+botao.type = "button";
+botao.className = "botao evento-saiba-mais";
+botao.textContent = "Saiba mais →";
+
+botao.addEventListener("click", () => {
+  const modalFundo = document.getElementById("modalFundo");
+  const modalTitulo = document.getElementById("modalTitulo");
+  const modalCorpo = document.getElementById("modalCorpo");
+  const modalAcoes = document.getElementById("modalAcoes");
+
+  if (!modalFundo || !modalTitulo || !modalCorpo || !modalAcoes) {
+    alert(
+      `${evento.titulo}\n\nData: ${data.textContent}\n\n${evento.descricao || "Sem descrição."}`
+    );
+    return;
+  }
+
+  modalTitulo.textContent = evento.titulo;
+  modalCorpo.replaceChildren();
+  modalAcoes.replaceChildren();
+
+  const dataCompleta = document.createElement("p");
+  dataCompleta.textContent = data.textContent;
+
+  const descricaoCompleta = document.createElement("p");
+  descricaoCompleta.textContent = evento.descricao || "Sem descrição.";
+
+  modalCorpo.append(dataCompleta, descricaoCompleta);
+  modalFundo.classList.add("aberto");
+  const botaoFechar = document.createElement("button");
+botaoFechar.className = "botao botao-secundario";
+botaoFechar.textContent = "Fechar";
+botaoFechar.addEventListener("click", () => {
+  modalFundo.classList.remove("aberto");
+});
+
+modalAcoes.appendChild(botaoFechar);
+});
+
+cartao.append(titulo, data, descricao, botao);
+lista.appendChild(cartao);
+
+    });
+  } catch (erro) {
+    lista.replaceChildren();
+
+    const mensagem = document.createElement("p");
+    mensagem.textContent =
+      "Não foi possível carregar os eventos. Tente novamente mais tarde.";
+
+    lista.appendChild(mensagem);
+    console.error("Erro ao carregar eventos:", erro);
+  }
+}
+
+carregarEventos();
+carregarLivros();
+
+// ==========================================
+// PAINEL DE NOTIFICAÇÕES
+// ==========================================
+
+const botaoNotificacoes = document.getElementById("botaoNotificacoes");
+const painelNotificacoes = document.getElementById("painelNotificacoes");
+const fecharNotificacoes = document.getElementById("fecharNotificacoes");
+
+if (botaoNotificacoes && painelNotificacoes) {
+  botaoNotificacoes.addEventListener("click", () => {
+    const vaiAbrir = painelNotificacoes.hidden;
+
+    painelNotificacoes.hidden = !vaiAbrir;
+    botaoNotificacoes.setAttribute("aria-expanded", String(vaiAbrir));
+  });
+}
+
+if (fecharNotificacoes && painelNotificacoes) {
+  fecharNotificacoes.addEventListener("click", () => {
+    painelNotificacoes.hidden = true;
+    botaoNotificacoes?.setAttribute("aria-expanded", "false");
+  });
+}
+
+document.addEventListener("click", (evento) => {
+  if (
+    painelNotificacoes &&
+    botaoNotificacoes &&
+    !painelNotificacoes.hidden &&
+    !painelNotificacoes.contains(evento.target) &&
+    !botaoNotificacoes.contains(evento.target)
+  ) {
+    painelNotificacoes.hidden = true;
+    botaoNotificacoes.setAttribute("aria-expanded", "false");
+  }
+});

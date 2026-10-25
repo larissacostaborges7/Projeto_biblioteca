@@ -1,0 +1,532 @@
+
+/* ========================================
+   PAINEL DO FUNCIONÁRIO
+   Biblioteca Municipal de Arujá
+   ======================================== */
+
+:root {
+    --azul-escuro: #142B49;
+    --azul-medio: #203F63;
+    --dourado: #C6A15B;
+    --dourado-claro: #E8D8B5;
+    --fundo: #F7F8FA;
+    --branco: #FFFFFF;
+    --texto: #263445;
+    --texto-suave: #6B7685;
+    --borda: #E5E8ED;
+    --sombra: 0 8px 24px rgba(20, 43, 73, 0.07);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--fundo);
+    color: var(--texto);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Cabeçalho */
+
+.painel-topo {
+    background: var(--azul-escuro);
+    color: var(--branco);
+    padding: 25px 6%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 25px;
+    border-bottom: 4px solid var(--dourado);
+}
+
+.painel-topo h1 {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(22px, 3vw, 30px);
+    font-weight: normal;
+    letter-spacing: 0.2px;
+}
+
+.painel-topo p {
+    margin: 8px 0 0;
+    color: var(--dourado-claro);
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+.funcionario-info {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 14px;
+}
+
+.funcionario-info strong {
+    padding: 7px 12px;
+    border: 1px solid rgba(232, 216, 181, 0.55);
+    border-radius: 20px;
+    color: var(--dourado-claro);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.funcionario-info a {
+    color: var(--branco);
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    padding: 9px 13px;
+    border-radius: 8px;
+    transition: 0.2s ease;
+}
+
+.funcionario-info a:hover {
+    background: var(--dourado);
+    color: var(--azul-escuro);
+    border-color: var(--dourado);
+}
+
+/* Conteúdo principal */
+
+.painel-conteudo {
+    width: min(1180px, 90%);
+    margin: 0 auto;
+    padding: 38px 0 55px;
+}
+
+.boas-vindas {
+    margin-bottom: 28px;
+    padding-left: 18px;
+    border-left: 4px solid var(--dourado);
+}
+
+.boas-vindas h2 {
+    margin: 0 0 9px;
+    color: var(--azul-escuro);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(25px, 3vw, 34px);
+    font-weight: normal;
+}
+
+.boas-vindas p {
+    margin: 0;
+    color: var(--texto-suave);
+    line-height: 1.6;
+}
+
+/* Busca */
+
+.busca-global {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+    background: var(--branco);
+    border: 1px solid var(--borda);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 38px;
+    box-shadow: var(--sombra);
+}
+
+.busca-global label {
+    grid-column: 1 / -1;
+    color: var(--azul-escuro);
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.busca-global input {
+    width: 100%;
+    min-width: 0;
+    padding: 13px 15px;
+    border: 1px solid #D8DDE5;
+    border-radius: 8px;
+    background: #FCFCFD;
+    color: var(--texto);
+    font: inherit;
+    outline: none;
+}
+
+.busca-global input:focus {
+    border-color: var(--dourado);
+    box-shadow: 0 0 0 3px rgba(198, 161, 91, 0.16);
+}
+
+.busca-global button {
+    padding: 13px 22px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--azul-escuro);
+    color: var(--branco);
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.busca-global button:hover {
+    background: var(--azul-medio);
+}
+
+/* Atalhos */
+
+.atalhos {
+    margin-bottom: 38px;
+}
+
+.atalhos > h2,
+.painel-informacoes h2 {
+    color: var(--azul-escuro);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 24px;
+    font-weight: normal;
+    margin: 0 0 20px;
+}
+
+.atalhos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.atalho-card {
+    position: relative;
+    display: block;
+    min-height: 190px;
+    padding: 25px 23px;
+    overflow: hidden;
+    background: var(--branco);
+    border: 1px solid var(--borda);
+    border-radius: 14px;
+    text-decoration: none;
+    color: var(--texto);
+    box-shadow: var(--sombra);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.atalho-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--dourado);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.2s ease;
+}
+
+.atalho-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--dourado-claro);
+    box-shadow: 0 14px 30px rgba(20, 43, 73, 0.12);
+}
+
+.atalho-card:hover::before {
+    transform: scaleX(1);
+}
+
+.atalho-card > span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    background: #F5F0E5;
+    font-size: 24px;
+}
+
+.atalho-card h3 {
+    margin: 0 0 9px;
+    color: var(--azul-escuro);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 19px;
+    font-weight: normal;
+}
+
+.atalho-card p {
+    margin: 0;
+    color: var(--texto-suave);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Informações do painel */
+
+.painel-informacoes {
+    padding: 25px 28px;
+    background: var(--branco);
+    border: 1px solid var(--borda);
+    border-left: 4px solid var(--dourado);
+    border-radius: 12px;
+    box-shadow: var(--sombra);
+}
+
+.painel-informacoes h2 {
+    margin-bottom: 10px;
+}
+
+.painel-informacoes p {
+    margin: 0;
+    color: var(--texto-suave);
+    line-height: 1.7;
+}
+
+/* Adaptação para tablets */
+
+@media (max-width: 900px) {
+    .painel-topo {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .funcionario-info {
+        justify-content: flex-start;
+    }
+
+    .atalhos-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Adaptação para celulares */
+
+@media (max-width: 560px) {
+    .painel-topo {
+        padding: 23px 5%;
+    }
+
+    .funcionario-info {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .painel-conteudo {
+        width: 90%;
+        padding-top: 28px;
+    }
+
+    .busca-global {
+        grid-template-columns: 1fr;
+        padding: 16px;
+    }
+
+    .busca-global label {
+        grid-column: auto;
+    }
+
+    .busca-global button {
+        width: 100%;
+    }
+
+    .atalhos-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .atalho-card {
+        min-height: auto;
+        padding: 22px;
+    }
+
+    .painel-informacoes {
+        padding: 22px;
+    }
+}
+
+
+/* POP-UP DE NOTIFICAÇÕES */
+.popup-notificacoes {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(20, 30, 25, 0.65);
+    backdrop-filter: blur(4px);
+}
+
+.popup-notificacoes.visivel {
+    display: flex;
+}
+
+.popup-notificacoes-conteudo {
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    padding: 32px 26px;
+    border-radius: 18px;
+    background: #ffffff;
+    color: #26352d;
+    text-align: center;
+    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.25);
+    animation: aparecerPopup 0.25s ease-out;
+}
+
+.popup-notificacoes-icone {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 42px;
+}
+
+.popup-notificacoes-conteudo h2 {
+    margin: 0 25px 14px;
+    font-size: 23px;
+}
+
+#textoPopupNotificacoes {
+    margin: 16px 0 22px;
+    text-align: left;
+    line-height: 1.6;
+}
+
+#textoPopupNotificacoes p {
+    margin: 8px 0;
+}
+
+.popup-notificacoes-fechar {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    border: none;
+    background: transparent;
+    color: #526158;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.popup-notificacoes-botao {
+    display: inline-block;
+    padding: 12px 20px;
+    border-radius: 9px;
+    background: #276749;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.popup-notificacoes-botao:hover {
+    background: #1f523a;
+}
+
+@keyframes aparecerPopup {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@media (max-width: 480px) {
+    .popup-notificacoes-conteudo {
+        padding: 28px 18px;
+    }
+
+    .popup-notificacoes-conteudo h2 {
+        font-size: 20px;
+    }
+}
+
+/* Busca rápida do acervo */
+.busca-global {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.busca-campo {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    gap: 10px;
+}
+
+.busca-campo input {
+    flex: 1;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.busca-campo button {
+    flex-shrink: 0;
+}
+
+.resultados-busca-acervo {
+    display: block;
+    width: 100%;
+    margin-top: 16px;
+    box-sizing: border-box;
+}
+
+.lista-resultados-acervo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+    width: 100%;
+}
+
+.item-resultado-acervo {
+    display: block;
+    min-width: 0;
+    padding: 16px;
+    box-sizing: border-box;
+    border: 1px solid #dce3eb;
+    border-radius: 10px;
+    background: #fff;
+    overflow-wrap: anywhere;
+}
+
+.item-resultado-acervo h3 {
+    margin: 0 0 8px;
+    font-size: 17px;
+}
+
+.item-resultado-acervo p {
+    margin: 5px 0;
+}
+
+/* Card do Mapa Virtual */
+.card-mapa-virtual {
+    border: 1px solid #c9dfd0;
+    background: linear-gradient(135deg, #ffffff, #f0f7f2);
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-mapa-virtual span {
+    font-size: 32px;
+}
+
+.card-mapa-virtual h3 {
+    color: #245c45;
+}
+
+.card-mapa-virtual p {
+    color: #53665b;
+}
+
+.card-mapa-virtual:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(36, 92, 69, 0.14);
+    text-decoration: none;
+}
+
+.card-mapa-virtual:focus-visible {
+    outline: 3px solid #36795b;
+    outline-offset: 3px;
+}

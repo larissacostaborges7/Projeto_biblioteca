@@ -1,0 +1,351 @@
+
+/* ==========================================
+   CADASTRO PRESENCIAL DE LEITOR
+   Identidade visual do cadastro principal
+========================================== */
+
+:root {
+    --azul-escuro: #102c3a;
+    --azul: #17495a;
+    --azul-claro: #eaf3f5;
+    --dourado: #d6ad60;
+    --dourado-escuro: #b98c3f;
+    --branco: #ffffff;
+    --texto: #253943;
+    --cinza: #71818a;
+    --borda: #d9e2e5;
+    --erro: #c0392b;
+    --sucesso: #20804c;
+}
+
+/* Fundo e organização da página */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: var(--texto);
+    background:
+        radial-gradient(circle at top left, #28596a 0, transparent 38%),
+        linear-gradient(135deg, #0c2430, #173d4a 55%, #102c3a);
+}
+
+.pagina {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 16px;
+}
+
+/* Cabeçalho */
+
+.cabecalho {
+    width: 100%;
+    text-align: center;
+    color: var(--branco);
+    margin-bottom: 25px;
+}
+
+.logo {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 34px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.logo span {
+    color: var(--dourado);
+}
+
+.cabecalho p {
+    margin-top: 8px;
+    color: #d6e4e8;
+    font-size: 14px;
+}
+
+/* Cartão principal
+   Mantém o tamanho original do cadastro */
+
+.cadastro-presencial {
+    width: 100%;
+    max-width: 560px;
+    padding: 34px;
+    background: var(--branco);
+    border: 1px solid rgba(214, 173, 96, 0.65);
+    border-radius: 22px;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.3);
+}
+
+/* Títulos e textos */
+
+.cadastro-presencial h1 {
+    text-align: center;
+    color: var(--azul-escuro);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.cadastro-presencial h2 {
+    margin: 24px 0 12px;
+    color: var(--azul-escuro);
+    font-size: 17px;
+}
+
+.cadastro-presencial > p {
+    color: var(--cinza);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 18px;
+}
+
+/* Aviso */
+
+.cadastro-presencial .aviso {
+    padding: 17px;
+    margin-bottom: 20px;
+    background: #f5f9fa;
+    border: 1px solid #d7e6e9;
+    border-left: 4px solid var(--dourado);
+    border-radius: 12px;
+    color: var(--texto);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* Campos do formulário */
+
+.cadastro-presencial .grupo-campos {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+}
+
+.cadastro-presencial .campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-bottom: 17px;
+}
+
+.cadastro-presencial .campo.completo {
+    grid-column: auto;
+}
+
+.cadastro-presencial .campo label {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--azul-escuro);
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.cadastro-presencial .campo input,
+.cadastro-presencial .campo select {
+    display: block;
+    width: 100%;
+    min-height: 46px;
+    padding: 12px 13px;
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+    background: #fbfcfc;
+    color: var(--texto);
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.cadastro-presencial .campo input::placeholder {
+    color: #a0adb3;
+}
+
+.cadastro-presencial .campo input:focus,
+.cadastro-presencial .campo select:focus {
+    border-color: var(--dourado-escuro);
+    box-shadow: 0 0 0 3px rgba(214, 173, 96, 0.16);
+}
+
+/* Campos de senha e botão do olho */
+
+.cadastro-presencial .senha-container {
+    position: relative;
+    width: 100%;
+}
+
+.cadastro-presencial .senha-container input {
+    padding-right: 48px;
+}
+
+.cadastro-presencial .alternar-senha {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: var(--azul);
+    font-size: 19px;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.cadastro-presencial .alternar-senha:hover {
+    color: var(--dourado-escuro);
+}
+
+/* Requisitos da senha */
+
+.cadastro-presencial .requisitos-senha {
+    margin-top: 10px;
+    padding: 11px 12px;
+    background: #f6f8f9;
+    border-radius: 9px;
+}
+
+.cadastro-presencial .requisitos-senha p {
+    margin-bottom: 8px;
+    color: var(--cinza);
+    font-size: 12px;
+}
+
+.cadastro-presencial .requisitos-senha ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.cadastro-presencial .requisitos-senha li {
+    margin: 6px 0;
+    color: var(--erro);
+    font-size: 12px;
+}
+
+.cadastro-presencial .requisitos-senha li.validado {
+    color: var(--sucesso);
+    font-weight: 600;
+}
+
+/* Confirmação de senha */
+
+.cadastro-presencial #mensagemConfirmacao {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+}
+
+.cadastro-presencial #mensagemConfirmacao.sucesso {
+    color: var(--sucesso);
+}
+
+.cadastro-presencial #mensagemConfirmacao.erro {
+    color: var(--erro);
+}
+
+/* Botões */
+
+.cadastro-presencial .acoes {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 22px;
+}
+
+.cadastro-presencial .acoes button,
+.cadastro-presencial .acoes a {
+    display: block;
+    width: 100%;
+    padding: 14px 18px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(
+        135deg,
+        var(--dourado),
+        var(--dourado-escuro)
+    );
+    color: #172c34;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.2s, filter 0.2s, box-shadow 0.2s;
+}
+
+.cadastro-presencial .acoes button:hover,
+.cadastro-presencial .acoes a:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.04);
+    box-shadow: 0 8px 18px rgba(185, 140, 63, 0.25);
+}
+
+.cadastro-presencial .acoes a {
+    background: var(--azul-claro);
+    color: var(--azul-escuro);
+}
+
+/* Mensagens de retorno */
+
+.cadastro-presencial #mensagem {
+    min-height: 0;
+    margin-top: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.cadastro-presencial #mensagem:empty {
+    display: none;
+}
+
+.cadastro-presencial #mensagem.sucesso {
+    color: var(--sucesso);
+}
+
+.cadastro-presencial #mensagem.erro {
+    color: var(--erro);
+}
+
+/* Acessibilidade */
+
+.cadastro-presencial [hidden] {
+    display: none !important;
+}
+
+.cadastro-presencial input:focus-visible,
+.cadastro-presencial button:focus-visible,
+.cadastro-presencial a:focus-visible {
+    outline: 3px solid var(--dourado);
+    outline-offset: 3px;
+}
+
+/* Responsividade */
+
+@media (max-width: 520px) {
+    .pagina {
+        padding: 22px 12px;
+    }
+
+    .logo {
+        font-size: 29px;
+    }
+
+    .cadastro-presencial {
+        padding: 25px 20px;
+        border-radius: 17px;
+    }
+
+    .cadastro-presencial h1 {
+        font-size: 24px;
+    }
+
+    .cadastro-presencial .aviso {
+        padding: 13px;
+    }
+}

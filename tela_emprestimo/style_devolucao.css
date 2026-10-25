@@ -1,0 +1,277 @@
+
+:root {
+    --azul: #142B4A;
+    --azul-escuro: #0D1D33;
+    --azul-medio: #24466D;
+    --azul-claro: #EDF2F8;
+    --dourado: #C5A04F;
+    --dourado-claro: #E7D5A1;
+    --fundo: #F4F6FA;
+    --branco: #FFFFFF;
+    --texto: #263449;
+    --suave: #68768A;
+    --borda: #DCE3ED;
+    --vermelho: #A52C35;
+    --verde: #246846;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 30px;
+    min-height: 100vh;
+    background: var(--fundo);
+    color: var(--texto);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Esconde o menu lateral somente nesta página */
+body > aside {
+    display: none !important;
+}
+
+/* Conteúdo principal */
+body > main {
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto !important;
+    padding: 30px;
+    background: var(--branco);
+    border: 1px solid var(--borda);
+    border-top: 5px solid var(--dourado);
+    border-radius: 14px;
+    box-shadow: 0 8px 30px #142B4A0D;
+}
+
+/* Cabeçalho */
+main > header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-bottom: 26px;
+    padding-bottom: 22px;
+    border-bottom: 2px solid var(--dourado-claro);
+}
+
+h1 {
+    margin: 0;
+    color: var(--azul);
+    font-size: clamp(24px, 3vw, 32px);
+    line-height: 1.3;
+}
+
+.user-info {
+    padding: 12px 16px;
+    background: var(--azul-claro);
+    border: 1px solid var(--borda);
+    border-radius: 8px;
+    color: var(--suave);
+    font-size: 13px;
+}
+
+.user-info strong {
+    color: var(--azul);
+}
+
+/* Área interna */
+.content-body {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.content-body > p {
+    color: var(--suave);
+    line-height: 1.6;
+}
+
+/* Mensagens */
+.alert {
+    margin-bottom: 20px;
+    padding: 15px 17px;
+    border-radius: 8px;
+    line-height: 1.5;
+}
+
+.alert-error {
+    background: #FFF0F1;
+    border: 1px solid #E8B9BD;
+    border-left: 4px solid var(--vermelho);
+    color: var(--vermelho);
+}
+
+.alert-success {
+    background: #EDF8F1;
+    border: 1px solid #B9DCC7;
+    border-left: 4px solid var(--verde);
+    color: var(--verde);
+}
+
+/* Busca */
+.form-group {
+    margin-bottom: 24px !important;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 9px;
+    color: var(--azul);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+#buscaDevolucao {
+    width: 100% !important;
+    min-height: 48px;
+    padding: 13px 15px !important;
+    border: 1px solid var(--borda) !important;
+    border-radius: 8px !important;
+    background: var(--branco);
+    color: var(--texto);
+    font-family: inherit;
+    font-size: 15px;
+    outline: none;
+}
+
+#buscaDevolucao:focus {
+    border-color: var(--dourado) !important;
+    box-shadow: 0 0 0 3px #C5A04F2B;
+}
+
+#mensagemBusca {
+    display: block;
+    margin-top: 8px;
+    color: var(--suave) !important;
+    font-size: 13px;
+}
+
+/* Tabela */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+}
+
+table {
+    width: 100%;
+    min-width: 950px;
+    border-collapse: collapse;
+    background: var(--branco);
+}
+
+thead {
+    background: var(--azul);
+    color: var(--branco);
+}
+
+th {
+    padding: 15px 13px;
+    border-bottom: 3px solid var(--dourado);
+    text-align: left;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+td {
+    padding: 15px 13px;
+    border-bottom: 1px solid var(--borda);
+    font-size: 13px;
+    line-height: 1.5;
+    vertical-align: middle;
+}
+
+tbody tr:nth-child(even) {
+    background: #F7F9FC;
+}
+
+tbody tr:hover {
+    background: var(--azul-claro);
+}
+
+td strong {
+    color: var(--azul);
+}
+
+td small {
+    color: var(--suave) !important;
+    overflow-wrap: anywhere;
+}
+
+/* Situação do empréstimo */
+.badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.badge-atrasado {
+    background: #FCE7E7;
+    color: #A52C35;
+}
+
+.badge-ativo {
+    background: #E6EEF9;
+    color: var(--azul-medio);
+}
+
+/* Botão de devolução */
+button.btn {
+    padding: 10px 13px !important;
+    border: 1px solid var(--dourado) !important;
+    border-radius: 7px;
+    background: var(--azul) !important;
+    color: var(--branco);
+    font-family: inherit;
+    font-size: 12px !important;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+button.btn:hover {
+    background: var(--azul-medio) !important;
+    transform: translateY(-1px);
+}
+
+/* Links */
+main a {
+    color: var(--azul-medio);
+}
+
+main a:hover {
+    color: #987528;
+}
+
+/* Celular */
+@media (max-width: 700px) {
+    body {
+        padding: 12px;
+    }
+
+    body > main {
+        padding: 20px 14px;
+        border-radius: 10px;
+    }
+
+    main > header {
+        align-items: flex-start;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    .user-info {
+        width: 100%;
+        overflow-wrap: anywhere;
+    }
+}

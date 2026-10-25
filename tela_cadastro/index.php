@@ -1,11 +1,29 @@
+
 <?php
-if (session_status() === PHP_SESSION_NONE) {
+if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-// Verifica se há um Administrador logado
-$ehAdminLogado = isset($_SESSION['cargo']) && strtolower($_SESSION['cargo']) === 'administrador';
+// Se um funcionário já estiver conectado, respeita o cargo.
+
+if (isset($_SESSION['id_funcionario'])) {
+    header('Location: ../painel/servidor.php');
+    exit;
+}
+
+
+$erroLogin = (string) ($_GET['erro'] ?? '');
+$mensagemErro = '';
+
+if ($erroLogin === '1' || $erroLogin === 'conexao') {
+    $mensagemErro = $erroLogin === 'conexao'
+        ? 'Não foi possível conectar ao sistema. Tente novamente.'
+        : 'CPF ou senha inválidos.';
+} elseif ($erroLogin === 'vazio') {
+    $mensagemErro = 'Preencha todos os campos para entrar.';
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -83,6 +101,14 @@ $ehAdminLogado = isset($_SESSION['cargo']) && strtolower($_SESSION['cargo']) ===
                             </button>
                         </form>
 
+                        
+<p class="recuperar-senha">
+    <a href="../recuperar_senha/index.php">
+        Esqueceu sua senha?
+    </a>
+</p>
+
+
                         <p class="troca-tela">
                             Ainda não tem uma conta?
                             <button type="button" class="link-tela" id="abrirCadastro">
@@ -116,9 +142,9 @@ $ehAdminLogado = isset($_SESSION['cargo']) && strtolower($_SESSION['cargo']) ===
                                 <label for="cargo">Cargo</label>
                                 <select id="cargo" name="cargo">
                                     <option value="">Selecione seu cargo</option>
-                                    <option value="bibliotecario">Bibliotecário(a)</option>
-                                    <option value="atendente">Atendente</option>
-                                    <option value="administrador">Administrador(a)</option>
+                                    <option value="Acervo">Acervo</option>
+                                    <option value="Atendente">Atendente</option>
+                                    <option value="Administrador">Administrador(a)</option>
                                 </select>
                             </div>
 

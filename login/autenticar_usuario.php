@@ -1,58 +1,32 @@
-
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 require_once __DIR__ . '/../includes/conexao.php';
 
-// Aceita somente requisições POST.
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: usuario.php');
-    exit;
-}
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $cpf = preg_replace('/\D/', '', $_POST['cpf'] ?? '');
+    $senha = $_POST['senha'] ?? '';
 
-// Recebe e trata os dados do formulário.
-$cpf = preg_replace('/\D/', '', trim($_POST['cpf'] ?? ''));
-$senha = $_POST['senha'] ?? '';
-
-// Valida os campos.
-if ($cpf === '' || $senha === '') {
-    header('Location: usuario.php?erro=vazio');
-    exit;
-}
-
-try {
-    // Busca o leitor pelo CPF.
-    $sql = "SELECT id_usuario, nome, cpf, senha
-            FROM usuarios
-            WHERE cpf = ?
-            LIMIT 1";
-
-    $stmt = $conexao->prepare($sql);
-    $stmt->execute([$cpf]);
-
-    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    // Verifica o usuário e a senha.
-    if (!$usuario || !password_verify($senha, $usuario['senha'])) {
-        header('Location: usuario.php?erro=1');
+    if (empty($cpf) || empty($senha)) {
+        header('Location: ../index.php?erro=vazio');
         exit;
     }
 
-    // Gera um novo identificador de sessão.
-    session_regenerate_id(true);
+    $stmt = $conexao->prepare("SELECT * FROM funcionarios WHERE cpf = ?");
+    $stmt->execute([$cpf]);
+    $funcionario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Salva os dados do leitor na sessão.
-    $_SESSION['id_usuario'] = (int) $usuario['id_usuario'];
-    $_SESSION['nome_usuario'] = $usuario['nome'];
+    if ($funcionario && password_verify($senha, $funcionario['senha'])) {
+        $_SESSION['id_funcionario'] = (int) $funcionario['id_funcionario'];
+        $_SESSION['nome_funcionario'] = $funcionario['nome'];
+        $_SESSION['cargo'] = $funcionario['cargo'];
 
-    // Redireciona para o painel do leitor.
-    header('Location: ../painel/usuario.php');
-    exit;
-
-} catch (PDOException $e) {
-    // Registra detalhes técnicos apenas no log do servidor.
-    error_log($e->getMessage());
-
-    header('Location: usuario.php?erro=conexao');
-    exit;
+        header('Location: ../tela_cadastro_acervo/tela_cadastro_acervo.php');
+        exit;
+    } else {
+        header('Location: ../index.php?erro=1');
+        exit;
+    }
 }

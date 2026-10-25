@@ -524,3 +524,251 @@ tbody tr:hover {
     border-radius: 8px;
     margin-bottom: 16px;
 }
+/* ========================================
+   HISTÓRICO DE EMPRÉSTIMOS DO USUÁRIO
+   ======================================== */
+
+.pagina-historico {
+    --azul: #142B4A;
+    --azul-escuro: #0D1D33;
+    --azul-medio: #24466D;
+    --azul-claro: #EDF2F8;
+    --dourado: #C5A04F;
+    --dourado-claro: #E7D5A1;
+    --fundo: #F4F6FA;
+    --branco: #FFFFFF;
+    --texto: #263449;
+    --suave: #68768A;
+    --borda: #DCE3ED;
+
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: var(--fundo);
+    color: var(--texto);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.pagina-historico > header {
+    padding: 32px 4%;
+    background: var(--branco);
+    border-bottom: 4px solid var(--dourado);
+}
+
+.pagina-historico > header h1 {
+    margin: 0 0 10px;
+    color: var(--azul);
+    font-size: clamp(28px, 3vw, 42px);
+}
+
+.pagina-historico > header p {
+    margin: 0;
+    color: var(--suave);
+    font-size: 16px;
+}
+
+.pagina-historico > nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 16px 4%;
+    background: var(--azul);
+}
+
+.pagina-historico > nav a {
+    padding: 12px 15px;
+    border-radius: 7px;
+    color: var(--branco);
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.pagina-historico > nav a:hover {
+    background: var(--azul-medio);
+    color: var(--dourado-claro);
+}
+
+.pagina-historico > main {
+    width: 92%;
+    max-width: 1600px;
+    margin: 38px auto;
+    padding: 32px;
+    background: var(--branco);
+    border: 1px solid var(--borda);
+    border-top: 5px solid var(--dourado);
+    border-radius: 16px;
+    box-shadow: 0 8px 30px #142B4A0D;
+}
+
+.pagina-historico main h2 {
+    margin: 0 0 24px;
+    color: var(--azul);
+    font-size: 26px;
+}
+
+.pagina-historico .tabela-container {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+}
+
+.pagina-historico table {
+    width: 100%;
+    min-width: 850px;
+    border-collapse: collapse;
+    background: var(--branco);
+}
+
+.pagina-historico thead {
+    background: var(--azul);
+    color: var(--branco);
+}
+
+.pagina-historico th {
+    padding: 16px 13px;
+    border-bottom: 3px solid var(--dourado);
+    text-align: left;
+    font-size: 14px;
+}
+
+.pagina-historico td {
+    padding: 15px 13px;
+    border-bottom: 1px solid var(--borda);
+    color: var(--texto);
+    font-size: 14px;
+}
+
+.pagina-historico tbody tr:nth-child(even) {
+    background: #F7F9FC;
+}
+
+.pagina-historico tbody tr:hover {
+    background: var(--azul-claro);
+}
+
+.pagina-historico main > p a {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 14px 22px;
+    border: 1px solid var(--dourado);
+    border-radius: 8px;
+    background: var(--azul);
+    color: var(--branco);
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+}
+
+.pagina-historico main > p a:hover {
+    background: var(--dourado);
+    color: var(--azul-escuro);
+}
+
+@media (max-width: 700px) {
+    .pagina-historico > header {
+        padding: 26px 5%;
+    }
+
+    .pagina-historico > nav {
+        padding: 12px 4%;
+    }
+
+    .pagina-historico > nav a {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .pagina-historico > main {
+        width: 94%;
+        margin: 22px auto;
+        padding: 20px 14px;
+    }
+
+    .pagina-historico main h2 {
+        font-size: 22px;
+    }
+}
+
+
+/* Pesquisa rápida de livros - reservas */
+.form-reserva {
+    position: relative;
+}
+
+#busca_livro {
+    display: block;
+    width: 100%;
+    min-height: 48px;
+    margin-top: 8px;
+    padding: 13px 16px;
+    border: 1px solid #DCE3ED;
+    border-radius: 9px;
+    background: #FFFFFF;
+    color: #263449;
+    font-family: inherit;
+    font-size: 15px;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#busca_livro:hover {
+    border-color: #C5A04F;
+}
+
+#busca_livro:focus {
+    border-color: #C5A04F;
+    box-shadow: 0 0 0 3px #C5A04F25;
+}
+
+.sugestoes-livros {
+    width: 100%;
+    margin-top: 6px;
+    border: 1px solid #DCE3ED;
+    border-radius: 9px;
+    background: #FFFFFF;
+    box-shadow: 0 8px 20px rgba(20, 43, 74, 0.10);
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.sugestoes-livros[hidden] {
+    display: none;
+}
+
+.sugestoes-livros .sugestao-livro {
+    display: block;
+    width: 100%;
+    padding: 13px 16px;
+    border: none;
+    border-bottom: 1px solid #EDF0F5;
+    border-radius: 0;
+    background: #FFFFFF;
+    color: #142B4A;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: left;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: background 0.2s;
+}
+
+.sugestoes-livros .sugestao-livro:last-child {
+    border-bottom: none;
+}
+
+.sugestoes-livros .sugestao-livro:hover,
+.sugestoes-livros .sugestao-livro:focus-visible {
+    background: #F8F4E9;
+    box-shadow: inset 3px 0 0 #C5A04F;
+    outline: none;
+}
+
+.sugestoes-livros p {
+    margin: 0;
+    padding: 14px 16px;
+    color: #68768A;
+    font-size: 14px;
+}

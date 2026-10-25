@@ -1,38 +1,65 @@
+
 <?php
 header('Content-Type: application/json; charset=utf-8');
 
-// Inclui o arquivo de conexão PDO que criamos
-require_once __DIR__ . '/includes/conexao.php';
+require_once __DIR__ . '/../includes/conexao.php';
 
 try {
-    // Busca todos os livros cadastrados no MySQL
-    $stmt = $conexao->query("
-        SELECT 
-            id, 
-            titulo, 
-            autor, 
-            categoria, 
-            (quantidade_disponivel > 0) AS disponivel, 
-            capa, 
-            descricao 
-        FROM livros 
-        ORDER BY id DESC
-    ");
-    
+    $sql = "
+        SELECT
+            l.id_livro AS id,
+            l.titulo,
+            l.autor,
+            COALESCE(l.categoria, 'Sem categoria') AS categoria,
+            COALESCE(l.sinopse, '') AS descricao,
+            COALESCE(l.capa, '') AS capa,
+            CASE
+                WHEN COUNT(e.id_exemplar) > 0
+                 AND SUM(
+                     CASE
+                         WHEN e.status = 'disponivel' THEN 1
+                         ELSE 0
+                     END
+                 ) > 0
+                THEN 1
+                ELSE 0
+            END AS disponivel
+        FROM livros l
+        LEFT JOIN exemplares e
+            ON e.id_livro = l.id_livro
+        GROUP BY
+            l.id_livro,
+            l.titulo,
+            l.autor,
+            l.categoria,
+            l.sinopse,
+            l.capa
+        ORDER BY l.id_livro DESC
+    ";
+
+    $stmt = $conexao->query($sql);
     $livros = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Converte os tipos de dados para o padrão esperado pelo JavaScript
     foreach ($livros as &$livro) {
-        $livro['id'] = (int)$livro['id'];
-        $livro['disponivel'] = (bool)$livro['disponivel'];
-        // Caso a capa esteja vazia no banco, define uma capa padrão ou fallback
+        $livro['id'] = (int) $livro['id'];
+        $livro['disponivel'] = (bool) $livro['disponivel'];
+
         if (empty($livro['capa'])) {
-            $livro['capa'] = "https://covers.openlibrary.org/b/isbn/9788594318241-M.jpg";
+            $livro['capa'] = '';
         }
     }
+    unset($livro);
 
-    echo json_encode(['sucesso' => true, 'livros' => $livros]);
-} catch (PDOException $e) {
-    echo json_encode(['sucesso' => false, 'mensagem' => 'Erro ao carregar acervo: ' . $e->getMessage()]);
+    echo json_encode([
+        'sucesso' => true,
+        'livros' => $livros
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+} catch (Throwable $e) {
+    http_response_code(500);
+
+    echo json_encode([
+        'sucesso' => false,
+        'mensagem' => 'Não foi possível carregar o acervo.'
+    ], JSON_UNESCAPED_UNICODE);
 }
-?>

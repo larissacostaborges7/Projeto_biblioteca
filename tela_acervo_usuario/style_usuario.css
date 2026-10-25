@@ -160,9 +160,12 @@ header h1 {
 }
 
 .livro-capa img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+    width: 100%;
+    max-width: 400px;
+    height: 300px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
 }
 
 .livro-info {
@@ -309,4 +312,225 @@ header h1 {
 .filtro-botao.ativo {
   background: var(--azul-petroleo);
   color: white;
+}
+
+
+/* Botão de favoritar livro */
+.btn-favoritar {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid #f0c9d2;
+    border-radius: 50%;
+    background-color: #fff5f7;
+    color: #b84b68;
+
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+
+    transition:
+        background-color 0.25s ease,
+        color 0.25s ease,
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+/* Efeito ao passar o mouse */
+.btn-favoritar:hover {
+    background-color: #ffe3ea;
+    transform: scale(1.08);
+    box-shadow: 0 3px 10px rgba(184, 75, 104, 0.18);
+}
+
+/* Livro favoritado */
+.btn-favoritar.favoritado {
+    background-color: #b83253;
+    color: #ffffff;
+    border-color: #b83253;
+}
+
+/* Efeito ao clicar */
+.btn-favoritar:active {
+    transform: scale(0.94);
+}
+
+/* Acessibilidade: foco pelo teclado */
+.btn-favoritar:focus-visible {
+    outline: 3px solid #e8a0b2;
+    outline-offset: 3px;
+}
+
+/* Estado temporário durante a requisição */
+.btn-favoritar:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+
+/* AMPLIAÇÃO DA CAPA DO LIVRO */
+.modal-capa {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(10, 25, 30, 0.88);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-capa.aberta {
+    display: flex;
+}
+
+.modal-capa img {
+    display: block;
+    max-width: 90vw;
+    max-height: 85vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+.modal-capa-fechar {
+    position: absolute;
+    top: 18px;
+    right: 24px;
+    width: 46px;
+    height: 46px;
+    border: none;
+    border-radius: 50%;
+    background: white;
+    color: var(--azul-escuro);
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.modal-capa-fechar:hover {
+    background: var(--azul-claro);
+}
+
+.livro-capa img {
+    cursor: zoom-in;
+}
+/* Janela de ampliação da capa */
+.modal-capa {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.85);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-capa.aberta {
+    display: flex;
+}
+
+.modal-capa img {
+    display: block;
+    max-width: 90vw;
+    max-height: 85vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+.modal-capa-fechar {
+    position: absolute;
+    top: 15px;
+    right: 22px;
+    width: 46px;
+    height: 46px;
+    border: none;
+    border-radius: 50%;
+    background: white;
+    color: #123;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.modal-capa-fechar:hover {
+    background: #e5e7eb;
+}
+
+.livro-capa img {
+    cursor: zoom-in;
+}
+
+/* Botão do Mapa Virtual */
+.botao-mapa-virtual {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    padding: 13px 22px;
+    margin: 12px 0;
+
+    background: linear-gradient(135deg, #245c45, #36795b);
+    color: #ffffff;
+
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+
+    border: 1px solid #4b8b6c;
+    border-radius: 10px;
+
+    box-shadow: 0 4px 10px rgba(25, 70, 49, 0.18);
+
+    transition:
+        background 0.25s ease,
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+/* Efeito ao passar o mouse */
+.botao-mapa-virtual:hover {
+    background: linear-gradient(135deg, #194532, #286449);
+    color: #ffffff;
+
+    transform: translateY(-2px);
+    box-shadow: 0 7px 15px rgba(25, 70, 49, 0.25);
+}
+
+/* Efeito ao clicar */
+.botao-mapa-virtual:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(25, 70, 49, 0.2);
+}
+
+/* Acessibilidade pelo teclado */
+.botao-mapa-virtual:focus-visible {
+    outline: 3px solid #e0b85b;
+    outline-offset: 4px;
+}
+
+/* Ajuste para celular */
+@media (max-width: 600px) {
+    .botao-mapa-virtual {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 14px 16px;
+        font-size: 14px;
+    }
+}
+.botao-mapa-virtual,
+.botao-mapa-virtual:hover,
+.botao-mapa-virtual:focus,
+.botao-mapa-virtual:active,
+.botao-mapa-virtual:visited {
+    text-decoration: none !important;
 }

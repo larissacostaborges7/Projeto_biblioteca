@@ -29,7 +29,8 @@ try {
             SELECT l.*, f.nome AS nome_funcionario
             FROM logs_auditoria l
             LEFT JOIN funcionarios f ON f.id_funcionario = l.id_funcionario
-            ORDER BY l.criado_em DESC
+            ORDER BY l.ORDER BY l.data_hora DESC
+LIMIT 100 DESC
             LIMIT 100
         ");
     }
@@ -54,7 +55,7 @@ try {
             📚 <span>Biblioteca Municipal</span>
         </a>
         <nav class="nav-menu">
-            <a href="../tela_emprestimo/index.php" class="nav-link">📋 Empréstimos</a>
+           <a href="../tela_emprestimo/registrar.php" class="nav-link">📋 Registrar empréstimo</a>
             <a href="../tela_emprestimo/devolver.php" class="nav-link">📥 Devoluções</a>
             <a href="../tela_emprestimo/reservas.php" class="nav-link">🔖 Reservas</a>
             <a href="../notificacoes/index.php" class="nav-link">🔔 Notificações</a>

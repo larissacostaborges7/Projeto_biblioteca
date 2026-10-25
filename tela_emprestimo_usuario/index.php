@@ -107,7 +107,7 @@ function classeStatus($item): string {
     <span class="menu-titulo">Área do leitor</span>
     
     <nav>
-        <a href="../tela_principal2/index.html">
+        <a href="../tela_principal2/index.php">
             <span>⌂</span> Início
         </a>
 
@@ -123,7 +123,7 @@ function classeStatus($item): string {
             <span>◷</span> Histórico
         </a>
 
-        <a href="../livros/listar.php">
+        <a href="../tela_acervo_usuario/tela_acervo_usuario.php">
             <span>📚</span> Consultar acervo
         </a>
     </nav>

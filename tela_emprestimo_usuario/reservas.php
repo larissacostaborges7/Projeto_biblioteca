@@ -133,7 +133,7 @@ if (!$naoLogado) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minhas reservas | Biblioteca Municipal</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
 
@@ -223,18 +223,22 @@ if (!$naoLogado) {
             <form method="POST" class="form-reserva">
                 <input type="hidden" name="acao" value="cadastrar_reserva">
 
-                <label for="id_livro">Livro</label>
+               
+<label for="busca_livro">Pesquisar livro</label>
 
-                <select name="id_livro" id="id_livro" required>
-                    <option value="">Selecione um livro</option>
+<input
+    type="search"
+    id="busca_livro"
+    placeholder="Digite o título ou o autor..."
+    autocomplete="off"
+    aria-controls="sugestoes_livros"
+    aria-autocomplete="list"
+>
 
-                    <?php foreach ($livros as $livro): ?>
-                        <option value="<?= (int) $livro['id_livro'] ?>">
-                            <?= h($livro['titulo']) ?>
-                            <?= !empty($livro['autor']) ? ' — ' . h($livro['autor']) : '' ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+<div id="sugestoes_livros" class="sugestoes-livros"></div>
+
+<input type="hidden" name="id_livro" id="id_livro" required>
+
 
                 <button type="submit" class="botao">
                     Confirmar reserva
@@ -326,6 +330,108 @@ if (!$naoLogado) {
         Sistema de Gerenciamento de Bibliotecas
     </footer>
 </main>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const campoBusca = document.getElementById('busca_livro');
+    const campoIdLivro = document.getElementById('id_livro');
+    const sugestoes = document.getElementById('sugestoes_livros');
+
+    const livros = <?= json_encode(
+        array_map(
+            fn($livro) => [
+                'id' => (int) $livro['id_livro'],
+                'titulo' => $livro['titulo'],
+                'autor' => $livro['autor'] ?? ''
+            ],
+            $livros
+        ),
+        JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT
+    ) ?>;
+
+    function mostrarSugestoes() {
+        const termo = campoBusca.value.trim().toLocaleLowerCase('pt-BR');
+
+        sugestoes.replaceChildren();
+        campoIdLivro.value = '';
+
+        if (termo.length === 0) {
+            sugestoes.hidden = true;
+            return;
+        }
+
+        const encontrados = livros
+            .filter(livro =>
+                livro.titulo.toLocaleLowerCase('pt-BR').includes(termo) ||
+                livro.autor.toLocaleLowerCase('pt-BR').includes(termo)
+            )
+            .slice(0, 10);
+
+        if (encontrados.length === 0) {
+            const mensagem = document.createElement('p');
+            mensagem.textContent = 'Nenhum livro encontrado.';
+            sugestoes.appendChild(mensagem);
+            sugestoes.hidden = false;
+            return;
+        }
+
+        encontrados.forEach(livro => {
+            const botao = document.createElement('button');
+            botao.type = 'button';
+            botao.className = 'sugestao-livro';
+            botao.textContent = livro.titulo +
+                (livro.autor ? ' — ' + livro.autor : '');
+
+            botao.addEventListener('click', () => {
+                campoBusca.value = livro.titulo;
+                campoIdLivro.value = livro.id;
+                sugestoes.replaceChildren();
+                sugestoes.hidden = true;
+            });
+
+            sugestoes.appendChild(botao);
+        });
+
+        sugestoes.hidden = false;
+    }
+
+    campoBusca.addEventListener('input', mostrarSugestoes);
+
+    campoBusca.addEventListener('keydown', evento => {
+        if (evento.key === 'Escape') {
+            sugestoes.hidden = true;
+        }
+    });
+
+    campoBusca.addEventListener('change', () => {
+        if (!campoIdLivro.value) {
+            campoBusca.setCustomValidity(
+                'Selecione um livro nas sugestões.'
+            );
+        } else {
+            campoBusca.setCustomValidity('');
+        }
+    });
+
+    campoBusca.addEventListener('input', () => {
+        campoBusca.setCustomValidity('');
+    });
+
+    document.querySelector('.form-reserva').addEventListener('submit', evento => {
+        if (!campoIdLivro.value) {
+            evento.preventDefault();
+            campoBusca.setCustomValidity(
+                'Digite e selecione um livro nas sugestões.'
+            );
+            campoBusca.reportValidity();
+        }
+    });
+
+    sugestoes.hidden = true;
+});
+</script>
+
 
 </body>
 </html>

@@ -54,51 +54,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao']) && $_POST['ac
             $stmtUpdateEx->execute([$idExemplar]);
 
             // 4. VERIFICA SE HÁ RESERVA ATIVA PARA ESTE LIVRO
-            $stmtLivroId = $conexao->prepare("SELECT id_livro FROM exemplares WHERE id_exemplar = ?");
-            $stmtLivroId->execute([$idExemplar]);
-            $idLivro = $stmtLivroId->fetchColumn();
-
-            $houveReservaAtendida = false;
-            if ($idLivro) {
-                // Busca a reserva ativa mais antiga para o livro
-                $stmtReserva = $conexao->prepare("
-                    SELECT id_reserva 
-                    FROM reservas 
-                    WHERE id_livro = ? AND status = 'ativa' 
-                    ORDER BY data_reserva ASC 
-                    LIMIT 1
-                ");
-                $stmtReserva->execute([$idLivro]);
-                $reserva = $stmtReserva->fetch(PDO::FETCH_ASSOC);
-
-                if ($reserva) {
-                    $idReserva = (int) $reserva['id_reserva'];
-                    // Atualiza a reserva para 'disponivel' para aparecer na Central de Notificações
-                    $stmtAtualizaReserva = $conexao->prepare("UPDATE reservas SET status = 'disponivel' WHERE id_reserva = ?");
-                    $stmtAtualizaReserva->execute([$idReserva]);
-
-                    registrarLog($conexao, 'RESERVA_LIBERADA', 'reservas', $idReserva, 'Livro devolvido e reserva disponibilizada.');
-                    $houveReservaAtendida = true;
-                }
-            }
+            // 4. A devolução não altera automaticamente as reservas.
+// A reserva continuará ativa até o funcionário registrar
+// o empréstimo quando o leitor comparecer à biblioteca.
 
             // 5. Registra o log da devolução
             registrarLog($conexao, 'DEVOLUCAO', 'emprestimos', $idEmprestimo, 'Livro devolvido e exemplar disponibilizado.');
             
             $conexao->commit();
 
-            if ($houveReservaAtendida) {
-                $sucesso = 'Devolução registrada! 🔔 Este livro possuía reserva ativa e agora está marcado como "Disponível" na Central de Notificações.';
-            } else {
-                $sucesso = 'Devolução registrada com sucesso! O exemplar já está disponível novamente no acervo.';
+           $sucesso = 'Devolução registrada com sucesso! O exemplar já está disponível novamente no acervo.';
+         } catch (Throwable $e) {
+            if ($conexao->inTransaction()) {
+                $conexao->rollBack();
             }
-        } catch (Throwable $e) {
-            if ($conexao->inTransaction()) $conexao->rollBack();
+
             $erro = $e->getMessage();
         }
     }
 }
-
 // Carrega Empréstimos Ativos para Devolução
 $stmtAtivos = $conexao->query("
     SELECT em.*, u.nome AS nome_usuario, u.cpf, l.titulo, ex.codigo_patrimonio, f.nome AS nome_funcionario
@@ -118,7 +92,7 @@ $emprestimosAtivos = $stmtAtivos->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciamento de Devoluções - Biblioteca</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style_devolucao.css">
 </head>
 <body>
 
@@ -159,9 +133,17 @@ $emprestimosAtivos = $stmtAtivos->fetchAll(PDO::FETCH_ASSOC);
                 <div class="alert alert-success"><?= htmlspecialchars($sucesso, ENT_QUOTES, 'UTF-8') ?></div>
             <?php endif; ?>
 
-            <div class="card-container">
-                <h2 class="card-title">Empréstimos Ativos (Pendentes de Devolução)</h2>
-                <p style="color: var(--cinza); margin-bottom: 1.5rem;">Localize o empréstimo na tabela abaixo e clique em "Registrar Devolução" para processar a entrega do livro.</p>
+            <div class="form-group" style="margin-bottom: 1rem;">
+    <label for="buscaDevolucao">Buscar empréstimo:</label>
+    <input
+        type="search"
+        id="buscaDevolucao"
+        placeholder="Digite o nome do leitor, título ou patrimônio..."
+        autocomplete="off"
+        style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px;"
+    >
+    <small id="mensagemBusca" style="color: var(--cinza);"></small>
+</div>
 
                 <?php if (empty($emprestimosAtivos)): ?>
                     <p>Não há empréstimos pendentes de devolução no momento.</p>
@@ -218,7 +200,53 @@ $emprestimosAtivos = $stmtAtivos->fetchAll(PDO::FETCH_ASSOC);
             </div>
 
         </div>
-    </main>
+   </main>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const campoBusca = document.getElementById('buscaDevolucao');
+    const mensagemBusca = document.getElementById('mensagemBusca');
+
+    const tabela = document.querySelector('.table-responsive table');
+
+    if (!campoBusca || !tabela) {
+        return;
+    }
+
+    const linhas = Array.from(tabela.querySelectorAll('tbody tr'));
+
+    campoBusca.addEventListener('input', function () {
+        const termo = campoBusca.value
+            .trim()
+            .toLocaleLowerCase('pt-BR');
+
+        let encontrados = 0;
+
+        linhas.forEach(function (linha) {
+            const texto = linha.textContent
+                .toLocaleLowerCase('pt-BR');
+
+            const corresponde = texto.includes(termo);
+
+            linha.style.display = corresponde ? '' : 'none';
+
+            if (corresponde) {
+                encontrados++;
+            }
+        });
+
+        if (termo === '') {
+            mensagemBusca.textContent = '';
+        } else if (encontrados === 0) {
+            mensagemBusca.textContent = 'Nenhum empréstimo encontrado.';
+        } else {
+            mensagemBusca.textContent =
+                encontrados === 1
+                    ? '1 empréstimo encontrado.'
+                    : encontrados + ' empréstimos encontrados.';
+        }
+    });
+});
+</script>
 </body>
 </html>

@@ -47,9 +47,9 @@ function formatarData($data) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Histórico de Empréstimos</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=3">
 </head>
-<body>
+<body class="pagina-historico">
 
     <header>
         <h1>Histórico de Empréstimos</h1>
@@ -61,8 +61,8 @@ function formatarData($data) {
         <a href="index.php">Meus empréstimos</a>
         <a href="reservas.php">Minhas reservas</a>
         <a href="historico.php">Histórico</a>
-        <a href="../livros/listar.php">Consultar livros</a>
-        <a href="../tela_cadastro/sair_usuario.php">Sair</a>
+        <a href="../tela_acervo_usuario/tela_acervo_usuario.php">Consultar livros</a>
+        <a href="../includes/logout.php">Sair</a>
     </nav>
 
     <main>

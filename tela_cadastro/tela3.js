@@ -148,6 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (dataNascimento) {
         dataNascimento.addEventListener("change", atualizarResponsavel);
     }
+    atualizarResponsavel();
 
     // ====================================================
     // 5. EXIBIÇÃO DE CARGO DE FUNCIONÁRIO

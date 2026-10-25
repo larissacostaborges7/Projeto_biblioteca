@@ -1,70 +1,93 @@
 
 <?php
-session_start();
+declare(strict_types=1);
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
 
 require_once __DIR__ . '/../includes/conexao.php';
 
-// Aceita somente requisições POST.
+/**
+ * Encaminha o funcionário conforme o cargo cadastrado no banco.
+ */
+function redirecionarFuncionario(string $cargo): void
+{
+    switch ($cargo) {
+        case 'Acervo':
+            header('Location: ../tela_cadastro_acervo/tela_cadastro_acervo.php');
+            exit;
+
+        case 'Atendente':
+    header('Location: ../painel/servidor.php');
+    exit;
+
+        case 'Administrador':
+            // Não encaminha para um painel que não está sendo utilizado.
+            // Por enquanto, mostra uma mensagem até definirmos a tela adequada.
+            http_response_code(403);
+            echo 'O acesso do Administrador precisa de uma tela inicial configurada.';
+            exit;
+
+        default:
+            http_response_code(403);
+            echo 'Cargo não reconhecido. Entre em contato com a administração.';
+            exit;
+    }
+}
+
+// Este arquivo aceita somente o envio do formulário por POST.
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: servidor.php');
+    header('Location: ../tela_cadastro/index.php');
     exit;
 }
 
-// Recebe e trata os dados do formulário.
-$cpf = preg_replace('/\D/', '', trim($_POST['cpf'] ?? ''));
-$senha = $_POST['senha'] ?? '';
+$cpf = preg_replace('/\D/', '', (string) ($_POST['cpf'] ?? ''));
+$senha = (string) ($_POST['senha'] ?? '');
 
-// Verifica os campos.
 if ($cpf === '' || $senha === '') {
-    header('Location: servidor.php?erro=vazio');
+    header('Location: ../tela_cadastro/index.php?erro=vazio');
+    exit;
+}
+
+if (strlen($cpf) !== 11) {
+    header('Location: ../tela_cadastro/index.php?erro=1');
     exit;
 }
 
 try {
-    // Busca o funcionário ativo pelo CPF.
-    $sql = "SELECT
-                id_funcionario,
-                nome,
-                cpf,
-                senha,
-                cargo
-            FROM funcionarios
-            WHERE cpf = ?
-              AND ativo = 1
-            LIMIT 1";
+    $stmt = $conexao->prepare(
+        'SELECT id_funcionario, nome, cpf, senha, cargo, ativo
+         FROM funcionarios
+         WHERE cpf = :cpf
+         LIMIT 1'
+    );
 
-    $stmt = $conexao->prepare($sql);
-    $stmt->execute([$cpf]);
-
+    $stmt->execute(['cpf' => $cpf]);
     $funcionario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Confere se o funcionário existe e se a senha está correta.
+    // Confere se a conta existe, está ativa e a senha corresponde ao hash.
     if (
         !$funcionario ||
+        (int) $funcionario['ativo'] !== 1 ||
         !password_verify($senha, $funcionario['senha'])
     ) {
-        header('Location: servidor.php?erro=1');
+        header('Location: ../tela_cadastro/index.php?erro=1');
         exit;
     }
 
-    // Renova o identificador da sessão.
+    // Evita reutilização do identificador de sessão após o login.
     session_regenerate_id(true);
 
-    // Salva os dados do funcionário na sessão.
-    $_SESSION['id_funcionario'] =
-        (int) $funcionario['id_funcionario'];
-
+    $_SESSION['id_funcionario'] = (int) $funcionario['id_funcionario'];
     $_SESSION['nome_funcionario'] = $funcionario['nome'];
     $_SESSION['cargo'] = $funcionario['cargo'];
 
-    // Redireciona para o painel do servidor.
-    header('Location: ../painel/servidor.php');
-    exit;
+    redirecionarFuncionario((string) $funcionario['cargo']);
 
 } catch (PDOException $e) {
-    // Registra o erro técnico no log do servidor.
-    error_log($e->getMessage());
+    error_log('Erro no login do funcionário: ' . $e->getMessage());
 
-    header('Location: servidor.php?erro=conexao');
+    header('Location: ../tela_cadastro/index.php?erro=conexao');
     exit;
 }
